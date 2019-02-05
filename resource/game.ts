@@ -10,7 +10,7 @@ class CanvasUtils {
         let context = canvas.getContext("2d");
         let localContext = context;
         let background = new Image();
-        background.style.color = 'orange';
+        background.style.background = 'orange';
 
         background.onload = function () {
             localContext.drawImage(background, 0, 0);
