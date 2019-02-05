@@ -41,3 +41,4 @@ class User {
 let canvasUtils = new CanvasUtils();
 canvasUtils.changeImage();
 
+console.log("Welcome to rgbGuess!");
