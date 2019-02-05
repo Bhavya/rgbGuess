@@ -8,7 +8,7 @@ var CanvasUtils = /** @class */ (function () {
         var context = canvas.getContext("2d");
         var localContext = context;
         var background = new Image();
-        canvas.style.background = 'orange';
+        canvas.style.backgroundImage = "url('assets/rainbow-texture-image-hd.jpg')";
         background.onload = function () {
             localContext.drawImage(background, 0, 0);
         };
