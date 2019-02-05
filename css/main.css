@@ -24,4 +24,19 @@ body {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+	z-index: 0;
+}
+
+.control-bar {
+	display: inline-block;
+	position: absolute;
+	margin: 20 auto;
+	background: #888;
+	border-radius: 20px;
+	height: 15vh;
+	width: 55vw;
+	z-index: 1;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
