@@ -1,4 +1,5 @@
 module com.rgbguess.game.ui {
+
     export class CanvasUtils {
         private canvas: HTMLCanvasElement;
         private context: CanvasRenderingContext2D;
@@ -6,6 +7,10 @@ module com.rgbguess.game.ui {
         constructor() {
             this.canvas = <HTMLCanvasElement>document.getElementById('canvas');
             this.context = this.canvas.getContext("2d");
+        }
+
+        getCanvasContext() {
+            return this.context;
         }
 
         clearCanvas() {

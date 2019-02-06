@@ -18,8 +18,8 @@ module com.rgbguess {
         }
 
         start() {
-            this.uiControls.initUI();
             this.canvasUtils.changeImage();
+            this.uiControls.initUI();
         }
     }
 }
@@ -29,9 +29,7 @@ function gameLoop() {
 }
 
 window.onload = function(event) {
-    //Get class from namespace.
     var Main = com.rgbguess.Main;
-
     var application = new Main();
     application.start();
     gameLoop();
