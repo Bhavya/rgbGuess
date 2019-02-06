@@ -27,6 +27,18 @@ body {
 	z-index: 0;
 }
 
+.timer {
+	display: inline-block;
+	position: absolute;
+	background: #888;
+	margin: 30px;
+	top: 0;
+	right: 0;
+	width: 100px;
+	height: 100px;
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif';
+}
+
 .control-bar {
 	display: inline-block;
 	position: absolute;
