@@ -21,16 +21,32 @@ module com.rgbguess {
             this.canvasUtils.changeImage();
             this.uiControls.initUI();
         }
+
+        validatePassKey(colourValueInputElement: HTMLInputElement, event: KeyboardEvent) {
+            this.uiControls.validatePassKey(colourValueInputElement, event);
+        }
     }
 }
+
+var Main = com.rgbguess.Main;
+var application = new Main();
 
 function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-window.onload = function(event) {
-    var Main = com.rgbguess.Main;
-    var application = new Main();
+
+/**
+ * Event Listers
+ */
+window.onload = function (event) {
     application.start();
     gameLoop();
+}
+
+/**
+* APIs
+*/
+function ValidatePassKey(colourValueInputElement: HTMLInputElement, event: KeyboardEvent) {
+    application.validatePassKey(colourValueInputElement, event);
 }

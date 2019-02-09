@@ -2,6 +2,23 @@
 
 module com.rgbguess.game.ui {
 
+    export class RGB {
+        private r: number;
+        private g: number;
+        private b: number;
+
+        constructor(r: number, g: number, b: number) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+
+        toString() {
+            let stringVal = `rgb(${this.r},${this.g},${this.b})`;
+            return stringVal;
+        }
+    }
+
     export class UIControls {
         private canvas: HTMLCanvasElement;
         private context: CanvasRenderingContext2D;
@@ -21,8 +38,8 @@ module com.rgbguess.game.ui {
         drawStartButton() {
             let buttonWidth = new Number(180);
             let buttonHeight = new Number(50);
-            let buttonX = new Number(this.canvas.width/2 - buttonWidth.valueOf()/2);
-            let buttonY = new Number(this.canvas.height/2 - buttonHeight.valueOf())
+            let buttonX = new Number(this.canvas.width / 2 - buttonWidth.valueOf() / 2);
+            let buttonY = new Number(this.canvas.height / 2 - buttonHeight.valueOf())
 
             let button = new Button(buttonX.valueOf(), buttonY.valueOf(), buttonWidth.valueOf(), buttonHeight.valueOf());
             button.draw();
@@ -30,6 +47,71 @@ module com.rgbguess.game.ui {
 
         clearStartButton() {
 
+        }
+
+        validatePassKey(colourValueInputElement: HTMLInputElement, event: KeyboardEvent) {
+            console.log(event.keyCode);
+            let colourValueTextBoxIndex = colourValueInputElement.id;
+            let nextIndex: number = parseInt(colourValueTextBoxIndex);
+
+            let textBoxValue = Number(colourValueInputElement.value);
+
+            if (isNaN(textBoxValue) || textBoxValue > 255) {
+                colourValueInputElement.value = Number(255).toString();
+            }
+
+            
+            switch (event.keyCode.valueOf()) {
+                case 32: // enter
+                    if (colourValueInputElement.value.length >= 3) {
+                        nextIndex = (parseInt(colourValueTextBoxIndex) + 1 == 4) ? 1 : parseInt(colourValueTextBoxIndex) + 1;
+                    }
+                    break;
+                case 68: // d
+                    nextIndex = (parseInt(colourValueTextBoxIndex) + 1 == 4) ? 1 : parseInt(colourValueTextBoxIndex) + 1;
+                    break;
+                case 65: // a
+                    nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 3 : parseInt(colourValueTextBoxIndex) - 1;
+                    break;
+                case 8: // backspace
+                    if (colourValueInputElement.value.length == 0) {
+                        nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 1 : parseInt(colourValueTextBoxIndex) - 1;
+                    }
+                    break;
+                case 67: // c
+                    colourValueInputElement.value = "";
+                    break;
+                case 90: // z
+                    (<HTMLInputElement>document.getElementById("1")).value = "",
+                    (<HTMLInputElement>document.getElementById("2")).value = "",
+                    (<HTMLInputElement>document.getElementById("3")).value = "";
+                    nextIndex = 1;
+                    break;
+                default:
+                    if (event.keyCode >= 48 
+                        && event.keyCode <= 57 && 
+                        colourValueInputElement.value.length >= 3) {
+                        nextIndex = (parseInt(colourValueTextBoxIndex) + 1 == 4) ? 3 : parseInt(colourValueTextBoxIndex) + 1;
+                    }
+                    break;
+            }
+
+
+            document.getElementById(nextIndex.toString()).focus();
+            this.updateColourPreview(
+                Number((<HTMLInputElement>document.getElementById("1")).value).valueOf(),
+                Number((<HTMLInputElement>document.getElementById("2")).value).valueOf(),
+                Number((<HTMLInputElement>document.getElementById("3")).value).valueOf(),
+            );
+        }
+
+        updateColourPreview(r: number, g: number, b: number) {
+            let colourPreviewer = <HTMLDivElement>document.getElementById("colour-preview");
+            let controlBar = <HTMLDivElement>document.getElementById("control-bar");
+            let rgb = new RGB(r, g, b).toString();
+
+            colourPreviewer.style.background = rgb;
+            controlBar.style.background = rgb;
         }
     }
 

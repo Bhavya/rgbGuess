@@ -71,6 +71,19 @@ var com;
         (function (game) {
             var ui;
             (function (ui) {
+                var RGB = /** @class */ (function () {
+                    function RGB(r, g, b) {
+                        this.r = r;
+                        this.g = g;
+                        this.b = b;
+                    }
+                    RGB.prototype.toString = function () {
+                        var stringVal = "rgb(" + this.r + "," + this.g + "," + this.b + ")";
+                        return stringVal;
+                    };
+                    return RGB;
+                }());
+                ui.RGB = RGB;
                 var UIControls = /** @class */ (function () {
                     function UIControls() {
                         this.canvas = document.getElementById('canvas');
@@ -91,6 +104,58 @@ var com;
                         button.draw();
                     };
                     UIControls.prototype.clearStartButton = function () {
+                    };
+                    UIControls.prototype.validatePassKey = function (colourValueInputElement, event) {
+                        console.log(event.keyCode);
+                        var colourValueTextBoxIndex = colourValueInputElement.id;
+                        var nextIndex = parseInt(colourValueTextBoxIndex);
+                        var textBoxValue = Number(colourValueInputElement.value);
+                        if (isNaN(textBoxValue) || textBoxValue > 255) {
+                            colourValueInputElement.value = Number(255).toString();
+                        }
+                        switch (event.keyCode.valueOf()) {
+                            case 32: // enter
+                                if (colourValueInputElement.value.length >= 3) {
+                                    nextIndex = (parseInt(colourValueTextBoxIndex) + 1 == 4) ? 1 : parseInt(colourValueTextBoxIndex) + 1;
+                                }
+                                break;
+                            case 68: // d
+                                nextIndex = (parseInt(colourValueTextBoxIndex) + 1 == 4) ? 1 : parseInt(colourValueTextBoxIndex) + 1;
+                                break;
+                            case 65: // a
+                                nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 3 : parseInt(colourValueTextBoxIndex) - 1;
+                                break;
+                            case 8: // backspace
+                                if (colourValueInputElement.value.length == 0) {
+                                    nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 1 : parseInt(colourValueTextBoxIndex) - 1;
+                                }
+                                break;
+                            case 67: // c
+                                colourValueInputElement.value = "";
+                                break;
+                            case 90: // z
+                                document.getElementById("1").value = "",
+                                    document.getElementById("2").value = "",
+                                    document.getElementById("3").value = "";
+                                nextIndex = 1;
+                                break;
+                            default:
+                                if (event.keyCode >= 48
+                                    && event.keyCode <= 57 &&
+                                    colourValueInputElement.value.length >= 3) {
+                                    nextIndex = (parseInt(colourValueTextBoxIndex) + 1 == 4) ? 3 : parseInt(colourValueTextBoxIndex) + 1;
+                                }
+                                break;
+                        }
+                        document.getElementById(nextIndex.toString()).focus();
+                        this.updateColourPreview(Number(document.getElementById("1").value).valueOf(), Number(document.getElementById("2").value).valueOf(), Number(document.getElementById("3").value).valueOf());
+                    };
+                    UIControls.prototype.updateColourPreview = function (r, g, b) {
+                        var colourPreviewer = document.getElementById("colour-preview");
+                        var controlBar = document.getElementById("control-bar");
+                        var rgb = new RGB(r, g, b).toString();
+                        colourPreviewer.style.background = rgb;
+                        controlBar.style.background = rgb;
                     };
                     return UIControls;
                 }());
@@ -153,17 +218,29 @@ var com;
                 this.canvasUtils.changeImage();
                 this.uiControls.initUI();
             };
+            Main.prototype.validatePassKey = function (colourValueInputElement, event) {
+                this.uiControls.validatePassKey(colourValueInputElement, event);
+            };
             return Main;
         }());
         rgbguess.Main = Main;
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
+var Main = com.rgbguess.Main;
+var application = new Main();
 function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
+/**
+ * Event Listers
+ */
 window.onload = function (event) {
-    var Main = com.rgbguess.Main;
-    var application = new Main();
     application.start();
     gameLoop();
 };
+/**
+* APIs
+*/
+function ValidatePassKey(colourValueInputElement, event) {
+    application.validatePassKey(colourValueInputElement, event);
+}

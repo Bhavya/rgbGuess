@@ -37,6 +37,7 @@ body {
 	width: 100px;
 	height: 100px;
 	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif';
+
 }
 
 .control-bar {
@@ -45,10 +46,43 @@ body {
 	margin: 20 auto;
 	background: #888;
 	border-radius: 20px;
-	height: 15vh;
-	width: 55vw;
 	z-index: 1;
 	left: 0;
 	right: 0;
 	bottom: 0;
+}
+
+.center-control {
+	width: 70%;
+	margin: 0 auto;
+}
+
+.rgb-textual-entry {
+	padding: 0px;
+}
+	.rgb-textual-entry input {
+		margin-top: 20px;
+		margin-bottom: 20px;
+		padding: 5px;
+		height: 50px;
+		font-size: 18px;
+		font-weight: 800;
+		text-transform: uppercase;
+		text-align: center;
+		border-radius: 5px;
+		border: 0px;
+		background: rgb(255,255,255,30%);
+	}
+
+	.rgb-textual-entry input:focus {
+		border: solid 2px green;
+	}
+
+.colour-preview {
+	border: solid 1px white;
+	margin: 20px;
+	height: 50px;
+	width : 50px;
+	float: left;
+	display:none;
 }

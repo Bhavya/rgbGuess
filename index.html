@@ -14,10 +14,15 @@
             2:00
         </div>
         <div class="accuracy-"></div>
-        <div class="control-bar">
-            <div class="rgb-textual-entry">
-            </div>
-            <div class="colour-preview">
+        <div id="control-bar" class="control-bar">
+            <div class="center-control">
+                <div class="rgb-textual-entry">
+                    <input id="1" type="text" onkeyup="ValidatePassKey(this, event)" maxlength="3">
+                    <input id="2" type="text" onkeyup="ValidatePassKey(this, event)" maxlength="3">
+                    <input id="3" type="text" onkeyup="ValidatePassKey(this, event)" maxlength="3">
+                </div>
+                <div id="colour-preview" class="colour-preview">
+                </div>
             </div>
         </div>
         
