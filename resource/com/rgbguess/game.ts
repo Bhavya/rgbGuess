@@ -29,7 +29,8 @@ module com.rgbguess {
         }
 
         checkSubmission() {
-            
+            //this.canvasUtils.changeImage();
+            this.canvasUtils.identifyPixelColour();
         }
     }
 }
@@ -51,7 +52,7 @@ window.onload = function (event) {
 }
 
 window.addEventListener(Events.SUBMISSION_EVENT, function(e: CustomEvent){
-    console.log(e.detail);
+    application.checkSubmission();
 }, false);
 
 /**

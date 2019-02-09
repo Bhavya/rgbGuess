@@ -1,12 +1,20 @@
+///<reference path='../../api/imagefetcher.ts'/>
+///<reference path='../../constants/constants.ts'/>
+
 module com.rgbguess.game.ui {
+
+    import ImageFetcher = com.rgbguess.api.ImageFetcher;
 
     export class CanvasUtils {
         private canvas: HTMLCanvasElement;
         private context: CanvasRenderingContext2D;
+        private imageFetcher: ImageFetcher;
 
         constructor() {
             this.canvas = <HTMLCanvasElement>document.getElementById('canvas');
             this.context = this.canvas.getContext("2d");
+            this.imageFetcher = new ImageFetcher();
+            this.imageFetcher.loadImages();
         }
 
         getCanvasContext() {
@@ -20,15 +28,34 @@ module com.rgbguess.game.ui {
 
         changeImage() {
             let background = new Image();
-            this.canvas.style.backgroundImage = "url('assets/rainbow-texture-image-hd.jpg')";
+            background.src = this.imageFetcher.getRandomImage();
+
+            // Make sure the image is loaded first otherwise nothing will draw.
+            let localContext = this.context;
+            background.onload = function () {
+                localContext.drawImage(background, 0, 0);
+            }
+            
             console.log("Changing image");
         }
 
-        identifyPixel() {
+        identifyPixelColour() {
+            // Get the CanvasPixelArray from the given coordinates and dimensions.
+            var imgd = this.context.getImageData(0, 0, 1000, 500);
+            var pix = imgd.data;
 
+            let randX: number = Math.round(Math.random()*imgd.width);
+            let randY: number = Math.round(Math.random()*imgd.height);
+
+            let randR = pix[randY*imgd.width + randX]
+            let randG = pix[randY*imgd.width + randX + 1];
+            let randB = pix[randY*imgd.width + randX + 2];
+
+            let loggingString = `Color at (${randX},${randY}) = rgb(${randR},${randG},${randB})`;
+            console.log(loggingString);
         }
 
-        renderMarker() {
+        getPixel(randVector: number) {
 
         }
     }

@@ -249,14 +249,53 @@ var com;
 (function (com) {
     var rgbguess;
     (function (rgbguess) {
+        var api;
+        (function (api) {
+            var ImageFetcher = /** @class */ (function () {
+                function ImageFetcher() {
+                    this.uriArray = new Array();
+                    this.length = 0;
+                }
+                ImageFetcher.prototype.loadImages = function () {
+                    this.addImage("https://tse1.mm.bing.net/th?id=OIP.P0FgS6d76p-wCGHXJpTfSAHaEo&pid=Api");
+                    this.addImage("https://wallpaperstock.net/wallpapers/thumbs1/52697wide.jpg");
+                    this.addImage("http://www.kinyu-z.net/data/wallpapers/35/822910.jpg");
+                };
+                ImageFetcher.prototype.getAllImages = function () {
+                    return this.uriArray;
+                };
+                ImageFetcher.prototype.getRandomImage = function () {
+                    var index = Math.round(Math.random() * (this.length - 1));
+                    console.log("index:" + index);
+                    return this.uriArray[index].toString();
+                };
+                ImageFetcher.prototype.addImage = function (name) {
+                    this.uriArray[this.length] = name;
+                    this.length += 1;
+                };
+                return ImageFetcher;
+            }());
+            api.ImageFetcher = ImageFetcher;
+        })(api = rgbguess.api || (rgbguess.api = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
+///<reference path='../../api/imagefetcher.ts'/>
+///<reference path='../../constants/constants.ts'/>
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
         var game;
         (function (game) {
             var ui;
             (function (ui) {
+                var ImageFetcher = com.rgbguess.api.ImageFetcher;
                 var CanvasUtils = /** @class */ (function () {
                     function CanvasUtils() {
                         this.canvas = document.getElementById('canvas');
                         this.context = this.canvas.getContext("2d");
+                        this.imageFetcher = new ImageFetcher();
+                        this.imageFetcher.loadImages();
                     }
                     CanvasUtils.prototype.getCanvasContext = function () {
                         return this.context;
@@ -267,12 +306,27 @@ var com;
                     };
                     CanvasUtils.prototype.changeImage = function () {
                         var background = new Image();
-                        this.canvas.style.backgroundImage = "url('assets/rainbow-texture-image-hd.jpg')";
+                        background.src = this.imageFetcher.getRandomImage();
+                        // Make sure the image is loaded first otherwise nothing will draw.
+                        var localContext = this.context;
+                        background.onload = function () {
+                            localContext.drawImage(background, 0, 0);
+                        };
                         console.log("Changing image");
                     };
-                    CanvasUtils.prototype.identifyPixel = function () {
+                    CanvasUtils.prototype.identifyPixelColour = function () {
+                        // Get the CanvasPixelArray from the given coordinates and dimensions.
+                        var imgd = this.context.getImageData(0, 0, 1000, 500);
+                        var pix = imgd.data;
+                        var randX = Math.round(Math.random() * imgd.width);
+                        var randY = Math.round(Math.random() * imgd.height);
+                        var randR = pix[randY * imgd.width + randX];
+                        var randG = pix[randY * imgd.width + randX + 1];
+                        var randB = pix[randY * imgd.width + randX + 2];
+                        var loggingString = "Color at (" + randX + "," + randY + ") = rgb(" + randR + "," + randG + "," + randB + ")";
+                        console.log(loggingString);
                     };
-                    CanvasUtils.prototype.renderMarker = function () {
+                    CanvasUtils.prototype.getPixel = function (randVector) {
                     };
                     return CanvasUtils;
                 }());
@@ -306,6 +360,10 @@ var com;
             Main.prototype.validatePassKey = function (colourValueInputElement, event) {
                 this.uiControls.validatePassKey(colourValueInputElement, event);
             };
+            Main.prototype.checkSubmission = function () {
+                //this.canvasUtils.changeImage();
+                this.canvasUtils.identifyPixelColour();
+            };
             return Main;
         }());
         rgbguess.Main = Main;
@@ -324,7 +382,7 @@ window.onload = function (event) {
     gameLoop();
 };
 window.addEventListener(Events.SUBMISSION_EVENT, function (e) {
-    console.log(e.detail);
+    application.checkSubmission();
 }, false);
 /**
 * APIs
