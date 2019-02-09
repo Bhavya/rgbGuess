@@ -1,34 +1,91 @@
 <html>
 
-    <head>
-        <meta charset="utf-8">
-        <title>rgbGuess | Guess the RGB value of a pixel while the clock runs down</title>
-        <link rel="stylesheet" type="text/css" href="css/main.css">
-    </head>
+<head>
+    <meta charset="utf-8">
+    <title>rgbGuess | Guess the RGB value of a pixel while the clock runs down</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Dosis|Signika" rel="stylesheet">
+</head>
 
-    <body>
+<body>
 
-        <canvas id="canvas"></canvas>
+    <canvas id="canvas"></canvas>
 
-        </canvas>
-        <div class="timer">
-            2:00
-        </div>
-        <div class="accuracy-"></div>
-        <div id="control-bar" class="control-bar">
-            <div class="center-control">
-                <div class="rgb-textual-entry">
-                    <input id="1" type="text" onkeyup="ValidatePassKey(this, event)" maxlength="3">
-                    <input id="2" type="text" onkeyup="ValidatePassKey(this, event)" maxlength="3">
-                    <input id="3" type="text" onkeyup="ValidatePassKey(this, event)" maxlength="3">
-                </div>
-                <div id="colour-preview" class="colour-preview">
-                </div>
+    </canvas>
+    <div class="timer">
+        2:00:000
+    </div>
+    <div class="accuracy-"></div>
+    <div id="control-bar" class="control-bar">
+        <div class="center-control">
+            <div class="rgb-textual-entry">
+                <input id="1" type="number" onkeyup="ValidatePassKey(this, event)" maxlength="3">
+                <input id="2" type="number" onkeyup="ValidatePassKey(this, event)" maxlength="3">
+                <input id="3" type="number" onkeyup="ValidatePassKey(this, event)" maxlength="3">
+            </div>
+            <div id="colour-preview" class="colour-preview">
             </div>
         </div>
-        
-        <!-- Scripts -->
-        <script type="text/javascript" src="resource/game.js"></script>
-    </body>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <header>
+                <h1>rgb(G,u,ess)</h1>
+                <h2>A guessing game for people who think they're realllly good at colour matching</h2>
+            </header>
+            <p>
+                How to play:
+                <ul>
+                    <li>A marker will indicate the colour of a random pixel on the screen. Don't worry; the pixel will
+                        be magnified.</li>
+                    <li>You will guess the RGB value of this pixel and type it in as quickly as possible. Once you
+                        submit your guess, the image will change.</li>
+                    <li>You will have 2 minutes to make as many close guesses as possible.</li>
+                </ul>
+            </p>
+            <p>
+                Scoring:
+                <ul>
+                    <li>Your score is determined by the speed of your guess, the accuracy of your guess, and how many
+                        images
+                        you are able to get through within the two minute window.
+                    </li>
+                </ul>
+                <footer>
+                    <input type="button" class="primary" value="Play Tutorial">
+                    <input type="button" class="special" value="Play">
+                </footer>
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="resource/game.js"></script>
+
+    <script type="text/javascript">
+        // Get the modal
+        var modal = document.getElementById('modal');
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
 
 </html>
