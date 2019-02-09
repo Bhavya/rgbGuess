@@ -2,14 +2,15 @@
 ///<reference path='user/user.ts'/>
 ///<reference path='game/ui/canvasutils.ts'/>
 ///<reference path='game/ui/ui.ts'/>
+///<reference path='game/ui/RGB.ts'/>
 
 console.log("Welcome to rgbGuess!");
 
 import Events = com.rgbguess.events;
 import CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
+import RGB = com.rgbguess.game.ui.RGB;
 import UIControls = com.rgbguess.game.ui.UIControls;
 import User = com.rgbguess.user.User;
-
 
 module com.rgbguess {
     export class Main {
@@ -20,7 +21,6 @@ module com.rgbguess {
         }
 
         start() {
-            this.canvasUtils.changeImage();
             this.uiControls.initUI();
         }
 
@@ -28,9 +28,12 @@ module com.rgbguess {
             this.uiControls.validatePassKey(colourValueInputElement, event);
         }
 
-        checkSubmission() {
-            //this.canvasUtils.changeImage();
-            this.canvasUtils.identifyPixelColour();
+        checkSubmission(rgb: RGB) {
+            let canvasUtils = this.canvasUtils;
+            this.canvasUtils.checkAccuracy(rgb, function() {
+                canvasUtils.changeColour();
+            });
+            //this.canvasUtils.identifyPixelColour();
         }
     }
 }
@@ -51,8 +54,9 @@ window.onload = function (event) {
     gameLoop();
 }
 
-window.addEventListener(Events.SUBMISSION_EVENT, function(e: CustomEvent){
-    application.checkSubmission();
+window.addEventListener(Events.SUBMISSION_EVENT, function (e: CustomEvent) {
+    let detail: { r: number; g: number; b: number } = e.detail;
+    application.checkSubmission(new RGB(detail.r, detail.g, detail.b));
 }, false);
 
 /**

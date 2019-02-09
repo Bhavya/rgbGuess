@@ -15,19 +15,6 @@ var com;
 (function (com) {
     var rgbguess;
     (function (rgbguess) {
-        var constants;
-        (function (constants) {
-            constants.CANVAS_WIDTH = new Number(1000);
-            constants.CANVAS_HEIGHT = new Number(500);
-        })(constants = rgbguess.constants || (rgbguess.constants = {}));
-    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
-})(com || (com = {}));
-///<reference path='../../constants/constants.ts'/>
-///<reference path='../../events/submissionevent.ts'/>
-var com;
-(function (com) {
-    var rgbguess;
-    (function (rgbguess) {
         var game;
         (function (game) {
             var ui;
@@ -54,6 +41,31 @@ var com;
                     return RGB;
                 }());
                 ui.RGB = RGB;
+            })(ui = game.ui || (game.ui = {}));
+        })(game = rgbguess.game || (rgbguess.game = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var constants;
+        (function (constants) {
+            constants.CANVAS_WIDTH = new Number(1000);
+            constants.CANVAS_HEIGHT = new Number(500);
+        })(constants = rgbguess.constants || (rgbguess.constants = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
+///<reference path='../../constants/constants.ts'/>
+///<reference path='../../events/submissionevent.ts'/>
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var game;
+        (function (game) {
+            var ui;
+            (function (ui) {
                 var UIControls = /** @class */ (function () {
                     function UIControls() {
                         this.canvas = document.getElementById('canvas');
@@ -126,7 +138,7 @@ var com;
                     UIControls.prototype.updateColourPreview = function (r, g, b) {
                         var colourPreviewer = document.getElementById("colour-preview");
                         var controlBar = document.getElementById("control-bar");
-                        this.rgbResult = new RGB(r, g, b);
+                        this.rgbResult = new ui.RGB(r, g, b);
                         var rgb = this.rgbResult.toString();
                         colourPreviewer.style.background = rgb;
                         controlBar.style.background = rgb;
@@ -196,7 +208,7 @@ var com;
         })(events = rgbguess.events || (rgbguess.events = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
-///<reference path='../game/ui/ui.ts'/>
+///<reference path='../game/ui/RGB.ts'/>
 ///<reference path='rgbevent.ts'/>
 var com;
 (function (com) {
@@ -279,8 +291,87 @@ var com;
         })(api = rgbguess.api || (rgbguess.api = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
+var LiteHashMap = /** @class */ (function () {
+    function LiteHashMap() {
+        this._keys = new Array();
+        this._values = new Array();
+        this._entrySet = new Array();
+        var init = new Array();
+        this.size = 0;
+    }
+    LiteHashMap.prototype.keySet = function () {
+        return this._keys;
+    };
+    LiteHashMap.prototype.values = function () {
+        return this._values;
+    };
+    LiteHashMap.prototype.entrySet = function () {
+        return this._entrySet;
+    };
+    LiteHashMap.prototype.put = function (key, value) {
+        this._keys.push(key);
+        this._values.push(value);
+        this._entrySet.push({ key: key, value: value });
+        this.size++;
+    };
+    LiteHashMap.prototype.get = function (key) {
+        var index = 0;
+        for (var x; x < this._keys.length; x++) {
+            if (this._keys[x] == key) {
+                index = x;
+                break;
+            }
+        }
+        return this._values[index];
+    };
+    LiteHashMap.prototype.clear = function () {
+        this._keys = new Array();
+        this._values = new Array();
+        this.size = 0;
+    };
+    LiteHashMap.prototype["delete"] = function (key) {
+        var index = 0;
+        var success = false;
+        for (var x; x < this._keys.length; x++) {
+            if (this._keys[x] == key) {
+                index = x;
+                success = true;
+                break;
+            }
+        }
+        this._keys.splice(index, 1);
+        this._values.splice(index, 1);
+        this.size--;
+        return success;
+    };
+    LiteHashMap.prototype.has = function (key) {
+        var hasKey = false;
+        for (var x; x < this._keys.length; x++) {
+            if (this._keys[x] == key) {
+                hasKey = true;
+                break;
+            }
+        }
+        return hasKey;
+    };
+    return LiteHashMap;
+}());
+///<reference path='lib/Dictionary.ts'/>
+var com;
+(function (com) {
+    var rgbGuess;
+    (function (rgbGuess) {
+        var Config;
+        (function (Config) {
+            Config.config = new LiteHashMap();
+            Config.config.put("mode", 0);
+            Config.config.put("hi", "hi");
+        })(Config = rgbGuess.Config || (rgbGuess.Config = {}));
+    })(rgbGuess = com.rgbGuess || (com.rgbGuess = {}));
+})(com || (com = {}));
 ///<reference path='../../api/imagefetcher.ts'/>
 ///<reference path='../../constants/constants.ts'/>
+///<reference path='../../config.ts'/>
 var com;
 (function (com) {
     var rgbguess;
@@ -290,18 +381,37 @@ var com;
             var ui;
             (function (ui) {
                 var ImageFetcher = com.rgbguess.api.ImageFetcher;
+                var RGB = com.rgbguess.game.ui.RGB;
+                var config = com.rgbGuess.Config.config;
                 var CanvasUtils = /** @class */ (function () {
                     function CanvasUtils() {
+                        this.pixelColour = new RGB(0, 0, 0);
+                        this.mode = 0;
                         this.canvas = document.getElementById('canvas');
                         this.context = this.canvas.getContext("2d");
                         this.imageFetcher = new ImageFetcher();
                         this.imageFetcher.loadImages();
+                        this.mode = parseInt(config.get("mode"));
                     }
                     CanvasUtils.prototype.getCanvasContext = function () {
                         return this.context;
                     };
                     CanvasUtils.prototype.clearCanvas = function () {
                         this.context.fillStyle = "black";
+                        this.context.fillRect(0, 0, 1280, 720);
+                    };
+                    CanvasUtils.prototype.change = function () {
+                        if (this.mode == 0) {
+                            this.changeColour();
+                        }
+                        else {
+                            this.changeImage();
+                        }
+                    };
+                    CanvasUtils.prototype.changeColour = function () {
+                        var rgb = new RGB(Math.round(Math.random() * 255), Math.round(Math.random() * 255), Math.round(Math.random() * 255));
+                        this.pixelColour = rgb;
+                        this.context.fillStyle = rgb.toString();
                         this.context.fillRect(0, 0, 1280, 720);
                     };
                     CanvasUtils.prototype.changeImage = function () {
@@ -332,6 +442,32 @@ var com;
                         this.context.arc(x, scrollY, 50, 0, 2 * Math.PI);
                         this.context.stroke();
                     };
+                    CanvasUtils.prototype.checkAccuracy = function (rgb, callback) {
+                        try {
+                            var accuracy = 0;
+                            var x = this.pixelColour.getR() - rgb.getR();
+                            var y = this.pixelColour.getG() - rgb.getG();
+                            var z = this.pixelColour.getB() - rgb.getB();
+                            var alt = Math.abs(Math.atan2(y, Math.sqrt(x * x + z * z)));
+                            var unscaledAccuracy = 100 - Math.round(alt * 100);
+                            accuracy = this.scaledAccuracy(unscaledAccuracy);
+                            var loggingString = accuracy + "%";
+                            console.log(loggingString);
+                        }
+                        catch (e) {
+                            //
+                        }
+                        finally {
+                            callback();
+                            console.log("callback");
+                        }
+                    };
+                    CanvasUtils.prototype.scaledAccuracy = function (angle) {
+                        if (angle < 70) {
+                            return 0;
+                        }
+                        return 100 * (angle - 70) / 30;
+                    };
                     return CanvasUtils;
                 }());
                 ui.CanvasUtils = CanvasUtils;
@@ -343,9 +479,11 @@ var com;
 ///<reference path='user/user.ts'/>
 ///<reference path='game/ui/canvasutils.ts'/>
 ///<reference path='game/ui/ui.ts'/>
+///<reference path='game/ui/RGB.ts'/>
 console.log("Welcome to rgbGuess!");
 var Events = com.rgbguess.events;
 var CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
+var RGB = com.rgbguess.game.ui.RGB;
 var UIControls = com.rgbguess.game.ui.UIControls;
 var User = com.rgbguess.user.User;
 var com;
@@ -358,15 +496,17 @@ var com;
                 this.uiControls = new UIControls();
             }
             Main.prototype.start = function () {
-                this.canvasUtils.changeImage();
                 this.uiControls.initUI();
             };
             Main.prototype.validatePassKey = function (colourValueInputElement, event) {
                 this.uiControls.validatePassKey(colourValueInputElement, event);
             };
-            Main.prototype.checkSubmission = function () {
-                //this.canvasUtils.changeImage();
-                this.canvasUtils.identifyPixelColour();
+            Main.prototype.checkSubmission = function (rgb) {
+                var canvasUtils = this.canvasUtils;
+                this.canvasUtils.checkAccuracy(rgb, function () {
+                    canvasUtils.changeColour();
+                });
+                //this.canvasUtils.identifyPixelColour();
             };
             return Main;
         }());
@@ -386,7 +526,8 @@ window.onload = function (event) {
     gameLoop();
 };
 window.addEventListener(Events.SUBMISSION_EVENT, function (e) {
-    application.checkSubmission();
+    var detail = e.detail;
+    application.checkSubmission(new RGB(detail.r, detail.g, detail.b));
 }, false);
 /**
 * APIs

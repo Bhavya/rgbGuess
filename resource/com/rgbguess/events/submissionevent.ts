@@ -1,4 +1,4 @@
-///<reference path='../game/ui/ui.ts'/>
+///<reference path='../game/ui/RGB.ts'/>
 ///<reference path='rgbevent.ts'/>
 module com.rgbguess.events {
 
