@@ -7,9 +7,9 @@ module com.rgbguess.api {
         constructor() { }
 
         loadImages(): void {
-           this.addImage("https://tse1.mm.bing.net/th?id=OIP.P0FgS6d76p-wCGHXJpTfSAHaEo&pid=Api");
-           this.addImage("https://wallpaperstock.net/wallpapers/thumbs1/52697wide.jpg");
-           this.addImage("http://www.kinyu-z.net/data/wallpapers/35/822910.jpg");
+           this.addImage("rainbow-texture-image-hd.jpg");
+           this.addImage("Autumn_fireball.jpg");
+           this.addImage("Tulipes-dans-Central-Park-1.jpg");
         }
 
         getAllImages(): Array<String> {
@@ -23,7 +23,7 @@ module com.rgbguess.api {
         }
 
         private addImage(name: string) : void {
-            this.uriArray[this.length] = name;
+            this.uriArray[this.length] = `assets/${name}`;
             this.length += 1;
         }
     }
