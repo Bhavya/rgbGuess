@@ -323,10 +323,14 @@ var com;
                         var randR = pix[randY * imgd.width + randX];
                         var randG = pix[randY * imgd.width + randX + 1];
                         var randB = pix[randY * imgd.width + randX + 2];
+                        this.renderMarker(randX, randY);
                         var loggingString = "Color at (" + randX + "," + randY + ") = rgb(" + randR + "," + randG + "," + randB + ")";
                         console.log(loggingString);
                     };
-                    CanvasUtils.prototype.getPixel = function (randVector) {
+                    CanvasUtils.prototype.renderMarker = function (x, y) {
+                        this.context.beginPath();
+                        this.context.arc(x, scrollY, 50, 0, 2 * Math.PI);
+                        this.context.stroke();
                     };
                     return CanvasUtils;
                 }());

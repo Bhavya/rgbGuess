@@ -35,7 +35,7 @@ module com.rgbguess.game.ui {
             background.onload = function () {
                 localContext.drawImage(background, 0, 0);
             }
-            
+
             console.log("Changing image");
         }
 
@@ -44,19 +44,22 @@ module com.rgbguess.game.ui {
             var imgd = this.context.getImageData(0, 0, 1000, 500);
             var pix = imgd.data;
 
-            let randX: number = Math.round(Math.random()*imgd.width);
-            let randY: number = Math.round(Math.random()*imgd.height);
+            let randX: number = Math.round(Math.random() * imgd.width);
+            let randY: number = Math.round(Math.random() * imgd.height);
 
-            let randR = pix[randY*imgd.width + randX]
-            let randG = pix[randY*imgd.width + randX + 1];
-            let randB = pix[randY*imgd.width + randX + 2];
+            let randR = pix[randY * imgd.width + randX]
+            let randG = pix[randY * imgd.width + randX + 1];
+            let randB = pix[randY * imgd.width + randX + 2];
 
+            this.renderMarker(randX, randY);
             let loggingString = `Color at (${randX},${randY}) = rgb(${randR},${randG},${randB})`;
             console.log(loggingString);
         }
 
-        getPixel(randVector: number) {
-
+        renderMarker(x:number, y: number) {
+            this.context.beginPath();
+            this.context.arc(x, scrollY, 50, 0, 2 * Math.PI);
+            this.context.stroke();
         }
     }
 }
