@@ -2,6 +2,7 @@
 ///<reference path='../../constants/constants.ts'/>
 ///<reference path='../../config.ts'/>
 ///<reference path='../../user/user.ts'/>
+///<reference path='Overlay.ts'/>
 
 
 module com.rgbguess.game.ui {
@@ -10,6 +11,7 @@ module com.rgbguess.game.ui {
     import RGB = com.rgbguess.game.ui.RGB;
     import User = com.rgbguess.user;
     import config = com.rgbguess.Config.config;
+    import Overlay = com.rgbguess.game.ui.Overlay;
 
     export class CanvasUtils {
         private canvas: HTMLCanvasElement;
@@ -106,9 +108,19 @@ module com.rgbguess.game.ui {
                 let percentZ = 1 - z / 255;
 
                 accuracy = 100 * (percentX + percentY + percentZ) / 3;
-                User.score += Math.round(accuracy*100);
+
+                if (accuracy <= 85) {
+                    User.score += Math.round(accuracy * 10);
+                } else {
+                    User.score += Math.round(accuracy * 100);
+                }
 
                 let loggingString = `${accuracy}%`;
+
+                accuracy = Math.round(accuracy);
+                let overlay = new Overlay();
+                overlay.setMessage(`${accuracy}%`);
+                overlay.blast();
                 console.log(loggingString);
             } catch (e) {
                 //

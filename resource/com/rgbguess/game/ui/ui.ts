@@ -17,6 +17,7 @@ module com.rgbguess.game.ui {
         }
 
         initUI() {
+
         }
 
         validatePassKey(colourValueInputElement: HTMLInputElement, event: KeyboardEvent) {
@@ -28,7 +29,7 @@ module com.rgbguess.game.ui {
             if (isNaN(textBoxValue) || textBoxValue > 255) {
                 colourValueInputElement.value = Number(255).toString();
             }
-
+            let currentValue = 0;
             console.log(event.keyCode);
             switch (event.keyCode.valueOf()) {
                 case 32: // space bar d -> go forward and wrap around
@@ -43,10 +44,24 @@ module com.rgbguess.game.ui {
                     nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 3 : parseInt(colourValueTextBoxIndex) - 1;
                     break;
                 case 87: // w -> increment value
-                    colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) + 1).toString();
+                    currentValue = parseInt(colourValueInputElement.value) + 5;
+                    currentValue = currentValue > 255 ? 255 : currentValue;
+                    colourValueInputElement.value = new String(currentValue).toString();
+                    this.updateColourPreview(
+                        Number((<HTMLInputElement>document.getElementById("1")).value).valueOf(),
+                        Number((<HTMLInputElement>document.getElementById("2")).value).valueOf(),
+                        Number((<HTMLInputElement>document.getElementById("3")).value).valueOf(),
+                    );
                     break;
                 case 83: // s -> decrement value
-                    colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) - 1).toString();
+                    currentValue = parseInt(colourValueInputElement.value) - 5;
+                    currentValue = currentValue < 0 ? 0 : currentValue;
+                    colourValueInputElement.value = new String(currentValue).toString();
+                    this.updateColourPreview(
+                        Number((<HTMLInputElement>document.getElementById("1")).value).valueOf(),
+                        Number((<HTMLInputElement>document.getElementById("2")).value).valueOf(),
+                        Number((<HTMLInputElement>document.getElementById("3")).value).valueOf(),
+                    );
                     break;
                 case 8: // backspace -> go back and stop at 1
                     if (colourValueInputElement.value.length == 0) {

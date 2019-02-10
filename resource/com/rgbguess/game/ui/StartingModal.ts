@@ -38,13 +38,14 @@ module com.rgbguess.game.ui {
             this.setFooter(footer);
 
             this.setCancelCallback(function (e) {
-                console.log("Starting Game");
-                new StartEvent().dispatch()
+                
+
             });
 
             buttonPlay.addEventListener("click", function (e) {
                 console.log("Starting Game");
                 new StartEvent().dispatch()
+                buttonPlay.removeEventListener("click", function(){});
             });
         }
     }

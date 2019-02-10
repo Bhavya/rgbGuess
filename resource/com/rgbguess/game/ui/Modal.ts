@@ -64,9 +64,10 @@ module com.rgbguess.game.ui {
             this.modalContext.appendChild(this.modal);
 
             let cb = this.cb;
+            let closeButton = this.closeButton;
             this.closeButton.addEventListener("click", function (e) {
-                (<HTMLDivElement>document.getElementById("modal")).style.display = "none";
                 cb();
+                closeButton.removeEventListener("click", function(){});
             });
         }
 

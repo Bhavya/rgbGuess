@@ -53,8 +53,9 @@ var com;
         (function (constants) {
             constants.CANVAS_WIDTH = new Number(1000);
             constants.CANVAS_HEIGHT = new Number(500);
-            constants.RULES = "How to play:\n                        <ul>\n                            <li>A marker will indicate the colour of a random pixel on the screen. Don't worry; the pixel will\n                                be magnified.</li>\n                            <li>You will guess the RGB value of this pixel and type it in as quickly as possible. Once you\n                                submit your guess, the image will change.</li>\n                            <li>You will have 2 minutes to make as many close guesses as possible.</li>\n                        </ul>";
-            constants.SCORING = "Scoring:\n                            <ul>\n                                <li>Your score is determined by the speed of your guess, the accuracy of your guess, and how many\n                                    images\n                                    you are able to get through within the two minute window.\n                                </li>\n                            </ul>";
+            constants.RULES = "How to play:\n                        <ul>\n                            <li>You will guess the RGB value of the background, and type your guess in as quickly as possible. Once you\n                                submit your guess, the colour will change.</li>\n                            <li>You will have 2 minutes to make as many close guesses as possible.</li>\n                        </ul>";
+            constants.SCORING = "Contols:\n                            <ul>\n                                <li>W: increment value in input field.\n                                </li>\n                                <li>S: decrement value in input field.\n                                </li>\n                                <li>A: move left.\n                                </li>\n                                <li>D: move right\n                                </li>\n                                <li>C: clear input field.\n                                </li>\n                                <li>Z: Clear all input fields.\n                                </li>\n                                <li>Enter: submit (must be on G input)\n                                </li>\n                            </ul>";
+            constants.END_MESSAGE = "<center><h1>GAME OVER<h1></center>";
         })(constants = rgbguess.constants || (rgbguess.constants = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
@@ -85,6 +86,7 @@ var com;
                         if (isNaN(textBoxValue) || textBoxValue > 255) {
                             colourValueInputElement.value = Number(255).toString();
                         }
+                        var currentValue = 0;
                         console.log(event.keyCode);
                         switch (event.keyCode.valueOf()) {
                             case 32: // space bar d -> go forward and wrap around
@@ -99,10 +101,16 @@ var com;
                                 nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 3 : parseInt(colourValueTextBoxIndex) - 1;
                                 break;
                             case 87: // w -> increment value
-                                colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) + 1).toString();
+                                currentValue = parseInt(colourValueInputElement.value) + 5;
+                                currentValue = currentValue > 255 ? 255 : currentValue;
+                                colourValueInputElement.value = new String(currentValue).toString();
+                                this.updateColourPreview(Number(document.getElementById("1").value).valueOf(), Number(document.getElementById("2").value).valueOf(), Number(document.getElementById("3").value).valueOf());
                                 break;
                             case 83: // s -> decrement value
-                                colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) - 1).toString();
+                                currentValue = parseInt(colourValueInputElement.value) - 5;
+                                currentValue = currentValue < 0 ? 0 : currentValue;
+                                colourValueInputElement.value = new String(currentValue).toString();
+                                this.updateColourPreview(Number(document.getElementById("1").value).valueOf(), Number(document.getElementById("2").value).valueOf(), Number(document.getElementById("3").value).valueOf());
                                 break;
                             case 8: // backspace -> go back and stop at 1
                                 if (colourValueInputElement.value.length == 0) {
@@ -328,10 +336,50 @@ var com;
         })(Config = rgbguess.Config || (rgbguess.Config = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var game;
+        (function (game) {
+            var ui;
+            (function (ui) {
+                var Overlay = /** @class */ (function () {
+                    function Overlay() {
+                        this.overlayContext = document.getElementById("overlay");
+                        this.message = "";
+                        this.overlayContext.style.display = "none";
+                    }
+                    Overlay.prototype.setMessage = function (message) {
+                        this.overlay = document.createElement("div");
+                        this.overlay.id = "overlay-content";
+                        this.overlay.className = "overlay-content";
+                        this.message = message;
+                        this.overlay.innerHTML = this.message;
+                    };
+                    Overlay.prototype.blast = function () {
+                        this.overlayContext.style.display = "block";
+                        this.overlayContext.appendChild(this.overlay);
+                        this.overlay.addEventListener("animationend", function () {
+                            if (document.getElementById("overlay-content") != null) {
+                                document.getElementById("overlay-content").removeEventListener("animationend", function () { });
+                                document.getElementById("overlay").removeChild(document.getElementById("overlay-content"));
+                            }
+                            document.getElementById("overlay").style.display = "none";
+                        });
+                    };
+                    return Overlay;
+                }());
+                ui.Overlay = Overlay;
+            })(ui = game.ui || (game.ui = {}));
+        })(game = rgbguess.game || (rgbguess.game = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
 ///<reference path='../../api/imagefetcher.ts'/>
 ///<reference path='../../constants/constants.ts'/>
 ///<reference path='../../config.ts'/>
 ///<reference path='../../user/user.ts'/>
+///<reference path='Overlay.ts'/>
 var com;
 (function (com) {
     var rgbguess;
@@ -344,6 +392,7 @@ var com;
                 var RGB = com.rgbguess.game.ui.RGB;
                 var User = com.rgbguess.user;
                 var config = com.rgbguess.Config.config;
+                var Overlay = com.rgbguess.game.ui.Overlay;
                 var CanvasUtils = /** @class */ (function () {
                     function CanvasUtils() {
                         this.pixelColour = new RGB(0, 0, 0);
@@ -413,8 +462,17 @@ var com;
                             var percentY = 1 - y / 255;
                             var percentZ = 1 - z / 255;
                             accuracy = 100 * (percentX + percentY + percentZ) / 3;
-                            User.score += Math.round(accuracy * 100);
+                            if (accuracy <= 85) {
+                                User.score += Math.round(accuracy * 10);
+                            }
+                            else {
+                                User.score += Math.round(accuracy * 100);
+                            }
                             var loggingString = accuracy + "%";
+                            accuracy = Math.round(accuracy);
+                            var overlay = new Overlay();
+                            overlay.setMessage(accuracy + "%");
+                            overlay.blast();
                             console.log(loggingString);
                         }
                         catch (e) {
@@ -489,9 +547,10 @@ var com;
                         this.modal.appendChild(this.footer);
                         this.modalContext.appendChild(this.modal);
                         var cb = this.cb;
+                        var closeButton = this.closeButton;
                         this.closeButton.addEventListener("click", function (e) {
-                            document.getElementById("modal").style.display = "none";
                             cb();
+                            closeButton.removeEventListener("click", function () { });
                         });
                     };
                     Modal.prototype.setCancelCallback = function (cb) {
@@ -573,12 +632,11 @@ var com;
                         _this.setContent(scoring);
                         _this.setFooter(footer);
                         _this.setCancelCallback(function (e) {
-                            console.log("Starting Game");
-                            new StartEvent().dispatch();
                         });
                         buttonPlay.addEventListener("click", function (e) {
                             console.log("Starting Game");
                             new StartEvent().dispatch();
+                            buttonPlay.removeEventListener("click", function () { });
                         });
                         return _this;
                     }
@@ -589,19 +647,63 @@ var com;
         })(game = rgbguess.game || (rgbguess.game = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
+///<reference path='Modal.ts'/>
+///<reference path='../../constants/constants.ts'/>
+///<reference path='../../events/StartEvent.ts'/>
+///<reference path='../../user/User.ts'/>
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var game;
+        (function (game) {
+            var ui;
+            (function (ui) {
+                var Constants = com.rgbguess.constants;
+                var User = com.rgbguess.user;
+                var EndModal = /** @class */ (function (_super) {
+                    __extends(EndModal, _super);
+                    function EndModal() {
+                        var _this = _super.call(this) || this;
+                        var footer = document.createElement("div");
+                        var endingMessage = document.createElement("p");
+                        endingMessage.innerHTML = Constants.END_MESSAGE;
+                        var score = document.createElement("p");
+                        score.innerHTML = "<center>SCORE: " + User.score + "</center><br/><br/>";
+                        _this.setHeading("rgb(G,u,ess)");
+                        _this.setSubtitle("A guessing game for people who think they're realllly good at colour matching");
+                        _this.setContent(endingMessage);
+                        _this.setContent(score);
+                        _this.setFooter(footer);
+                        _this.setCancelCallback(function (e) {
+                            console.log("Ending Game");
+                        });
+                        return _this;
+                    }
+                    return EndModal;
+                }(ui.Modal));
+                ui.EndModal = EndModal;
+            })(ui = game.ui || (game.ui = {}));
+        })(game = rgbguess.game || (rgbguess.game = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
 ///<reference path='events/submissionevent.ts'/>
 ///<reference path='user/user.ts'/>
 ///<reference path='game/ui/canvasutils.ts'/>
 ///<reference path='game/ui/ui.ts'/>
 ///<reference path='game/ui/RGB.ts'/>
 ///<reference path='game/ui/StartingModal.ts'/>
+///<reference path='game/ui/EndModal.ts'/>
+///<reference path='game/ui/Overlay.ts'/>
 ///<reference path='constants/constants.ts'/>
 console.log("Welcome to rgbGuess!");
 var Events = com.rgbguess.events;
 var CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
 var RGB = com.rgbguess.game.ui.RGB;
 var StartingModal = com.rgbguess.game.ui.StartingModal;
+var EndModal = com.rgbguess.game.ui.EndModal;
 var UIControls = com.rgbguess.game.ui.UIControls;
+var Overlay = com.rgbguess.game.ui.Overlay;
 var User = com.rgbguess.user;
 var Constants = com.rgbguess.constants;
 var com;
@@ -612,18 +714,31 @@ var com;
             function Main() {
                 this.canvasUtils = new CanvasUtils();
                 this.uiControls = new UIControls();
+                this.modal = new StartingModal();
             }
             Main.prototype.initialize = function () {
                 this.uiControls.initUI();
-                var modal = new StartingModal();
-                modal.construct();
-                modal.show();
+                this.modal.construct();
+                this.modal.show();
                 document.getElementById("side-top").style.display = "none";
                 document.getElementById("control-bar").style.display = "none";
             };
             Main.prototype.start = function () {
                 document.getElementById("modal").style.display = "none";
                 this.canvasUtils.changeColour();
+                document.getElementById("1").focus();
+                document.getElementById("1").value = "000";
+                document.getElementById("2").value = "000";
+                document.getElementById("3").value = "000";
+            };
+            Main.prototype.end = function () {
+                console.log("Game Ended");
+                document.getElementById("side-top").style.display = "none";
+                document.getElementById("control-bar").style.display = "none";
+                this.modal.destroy();
+                var modal = new EndModal;
+                modal.construct();
+                document.getElementById("modal").style.display = "block";
             };
             Main.prototype.validatePassKey = function (colourValueInputElement, event) {
                 this.uiControls.validatePassKey(colourValueInputElement, event);
@@ -660,12 +775,13 @@ window.addEventListener(Events.SUBMISSION_EVENT, function (e) {
 }, false);
 window.addEventListener(Events.START_EVENT, function (e) {
     console.log("received starting event");
-    var fiveMinutes = 60 * 2;
+    var fiveMinutes = 60 * 2 - 1;
     var display = document.querySelector('#timer');
     startTimer(fiveMinutes, display);
     document.getElementById("side-top").style.display = "block";
     document.getElementById("control-bar").style.display = "block";
     application.start();
+    window.removeEventListener(Events.START_EVENT, function () { });
 }, false);
 /**
  * Timer
@@ -690,10 +806,10 @@ function startTimer(duration, display) {
             document.getElementById("modal").style.display = "none";
         }
         if (timer < 0) {
-            timer = duration;
+            timer = 0;
             clearInterval(handler);
-            document.getElementById("side-top").style.display = "none";
-            document.getElementById("control-bar").style.display = "none";
+            window.removeEventListener(Events.START_EVENT, function (e) { });
+            application.end();
         }
     }, 1000);
 }

@@ -4,6 +4,8 @@
 ///<reference path='game/ui/ui.ts'/>
 ///<reference path='game/ui/RGB.ts'/>
 ///<reference path='game/ui/StartingModal.ts'/>
+///<reference path='game/ui/EndModal.ts'/>
+///<reference path='game/ui/Overlay.ts'/>
 ///<reference path='constants/constants.ts'/>
 
 console.log("Welcome to rgbGuess!");
@@ -12,7 +14,9 @@ import Events = com.rgbguess.events;
 import CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
 import RGB = com.rgbguess.game.ui.RGB;
 import StartingModal = com.rgbguess.game.ui.StartingModal;
+import EndModal = com.rgbguess.game.ui.EndModal;
 import UIControls = com.rgbguess.game.ui.UIControls;
+import Overlay = com.rgbguess.game.ui.Overlay;
 import User = com.rgbguess.user;
 import Constants = com.rgbguess.constants;
 
@@ -20,15 +24,15 @@ module com.rgbguess {
     export class Main {
         private canvasUtils = new CanvasUtils();
         private uiControls = new UIControls();
+        private modal: StartingModal = new StartingModal();
 
         constructor() {
         }
 
         initialize() {
             this.uiControls.initUI();
-            let modal: StartingModal = new StartingModal();
-            modal.construct();
-            modal.show();
+            this.modal.construct();
+            this.modal.show();
             (<HTMLDivElement>document.getElementById("side-top")).style.display = "none";
             (<HTMLDivElement>document.getElementById("control-bar")).style.display = "none";
         }
@@ -36,6 +40,23 @@ module com.rgbguess {
         start() {
             (<HTMLDivElement>document.getElementById("modal")).style.display = "none";
             this.canvasUtils.changeColour();
+            (<HTMLInputElement>document.getElementById("1")).focus();
+
+            (<HTMLInputElement>document.getElementById("1")).value = "000";
+            (<HTMLInputElement>document.getElementById("2")).value = "000";
+            (<HTMLInputElement>document.getElementById("3")).value = "000";
+        }
+
+        end() {
+            console.log("Game Ended");
+            (<HTMLDivElement>document.getElementById("side-top")).style.display = "none";
+            (<HTMLDivElement>document.getElementById("control-bar")).style.display = "none";
+            this.modal.destroy();
+
+            let modal: EndModal = new EndModal;
+            modal.construct();
+            (<HTMLDivElement>document.getElementById("modal")).style.display = "block";
+
         }
 
         validatePassKey(colourValueInputElement: HTMLInputElement, event: KeyboardEvent) {
@@ -77,12 +98,13 @@ window.addEventListener(Events.SUBMISSION_EVENT, function (e: CustomEvent) {
 
 window.addEventListener(Events.START_EVENT, function (e: CustomEvent) {
     console.log("received starting event");
-    let fiveMinutes = 60 * 2;
+    let fiveMinutes = 60 * 2 - 1;
     var display = document.querySelector('#timer');
     startTimer(fiveMinutes, display);
     (<HTMLDivElement>document.getElementById("side-top")).style.display = "block";
     (<HTMLDivElement>document.getElementById("control-bar")).style.display = "block";
     application.start();
+    window.removeEventListener(Events.START_EVENT, function () { });
 }, false);
 
 /**
@@ -113,10 +135,10 @@ function startTimer(duration, display) {
             (<HTMLDivElement>document.getElementById("modal")).style.display = "none";
         }
         if (timer < 0) {
-            timer = duration;
+            timer = 0;
             clearInterval(handler);
-            (<HTMLDivElement>document.getElementById("side-top")).style.display = "none";
-            (<HTMLDivElement>document.getElementById("control-bar")).style.display = "none";
+            window.removeEventListener(Events.START_EVENT, function (e) { });
+            application.end();
         }
     }, 1000);
 }

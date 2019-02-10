@@ -56,7 +56,7 @@ body {
 	display: inline-block;
 	position: absolute;
 	margin: 20 auto;
-	background: #888;
+	background: #000;
 	border-radius: 10px;
 	z-index: 1;
 	left: 50;
@@ -209,6 +209,30 @@ input[type="submit"]:hover, input[type="reset"]:hover, input[type="button"]:hove
 	cursor: pointer;
 }
 
+/* Overlay*/
+
+.overlay {
+	display: none;;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 80%;
+	overflow: auto;
+}
+
+.overlay-content {
+	margin: 20% auto 0% auto;
+	width: 200px;
+	overflow: hidden;
+	text-align: center;
+	font-size: 5em;
+	color: #fff;
+	opacity: 0;
+	animation: blast 0.8s ease-in;
+}
+
 /* animation */
 
 @keyframes Gradient {
@@ -233,5 +257,16 @@ input[type="submit"]:hover, input[type="reset"]:hover, input[type="button"]:hove
 	}
 	100% {
 		background-color: rgb(255, 255, 255);
+	}
+}
+
+@keyframes blast {
+	0% {
+		transform: scale(1, 1);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1.5, 1.5);
+		opacity: 0;
 	}
 }
