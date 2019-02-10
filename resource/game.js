@@ -53,6 +53,8 @@ var com;
         (function (constants) {
             constants.CANVAS_WIDTH = new Number(1000);
             constants.CANVAS_HEIGHT = new Number(500);
+            constants.RULES = "How to play:\n                        <ul>\n                            <li>A marker will indicate the colour of a random pixel on the screen. Don't worry; the pixel will\n                                be magnified.</li>\n                            <li>You will guess the RGB value of this pixel and type it in as quickly as possible. Once you\n                                submit your guess, the image will change.</li>\n                            <li>You will have 2 minutes to make as many close guesses as possible.</li>\n                        </ul>";
+            constants.SCORING = "Scoring:\n                            <ul>\n                                <li>Your score is determined by the speed of your guess, the accuracy of your guess, and how many\n                                    images\n                                    you are able to get through within the two minute window.\n                                </li>\n                            </ul>";
         })(constants = rgbguess.constants || (rgbguess.constants = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
@@ -475,17 +477,133 @@ var com;
         })(game = rgbguess.game || (rgbguess.game = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var game;
+        (function (game) {
+            var ui;
+            (function (ui) {
+                var Modal = /** @class */ (function () {
+                    function Modal() {
+                        this.modalContext = document.getElementById("modal");
+                        this.modal = document.createElement("div");
+                        this.closeButton = document.createElement("span");
+                        this.header = document.createElement("header");
+                        this.heading = document.createElement("h1");
+                        this.subtitle = document.createElement("h2");
+                        this.content = document.createElement("div");
+                        this.footer = this.footer = document.createElement("footer");
+                        this.modal.className = "modal-content";
+                        this.modalContext.appendChild(this.modal);
+                        this.closeButton.className = "close";
+                        this.closeButton.innerHTML = "&times;";
+                        this.modal.appendChild(this.closeButton);
+                        //this.modalContext.style.display = "none";
+                        this.closeButton.addEventListener("click", function (e) {
+                            document.getElementById("modal").style.display = "none";
+                        });
+                    }
+                    ;
+                    Modal.prototype.show = function () {
+                        this.modal.style.display = "block";
+                    };
+                    Modal.prototype.close = function () {
+                        this.modalContext.style.display = "none";
+                        console.log("closing");
+                    };
+                    Modal.prototype.setHeading = function (heading) {
+                        this.heading.append(heading);
+                    };
+                    Modal.prototype.setSubtitle = function (subtitle) {
+                        this.subtitle.append(subtitle);
+                    };
+                    Modal.prototype.setContent = function (content) {
+                        this.content.append(content);
+                    };
+                    Modal.prototype.setFooter = function (footer) {
+                        this.footer.append(footer);
+                    };
+                    Modal.prototype.isShowing = function () {
+                        return false;
+                    };
+                    Modal.prototype.construct = function () {
+                        this.header.appendChild(this.heading);
+                        this.header.appendChild(this.subtitle);
+                        this.modal.appendChild(this.header);
+                        this.modal.appendChild(this.content);
+                        this.modal.appendChild(this.footer);
+                        this.modalContext.appendChild(this.modal);
+                    };
+                    Modal.prototype.destroy = function () {
+                        this.close();
+                        this.modalContext.removeChild(this.modal);
+                    };
+                    return Modal;
+                }());
+                ui.Modal = Modal;
+            })(ui = game.ui || (game.ui = {}));
+        })(game = rgbguess.game || (rgbguess.game = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
+///<reference path='Modal.ts'/>
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var game;
+        (function (game) {
+            var ui;
+            (function (ui) {
+                var StartingModal = /** @class */ (function (_super) {
+                    __extends(StartingModal, _super);
+                    function StartingModal() {
+                        var _this = _super.call(this) || this;
+                        var buttonTut = document.createElement("input");
+                        buttonTut.type = "button";
+                        buttonTut.className = "primary";
+                        buttonTut.value = "Play Tutorial";
+                        var buttonPlay = document.createElement("input");
+                        buttonPlay.type = "button";
+                        buttonPlay.className = "special";
+                        buttonPlay.value = "START";
+                        var footer = document.createElement("div");
+                        footer.appendChild(buttonTut);
+                        footer.appendChild(buttonPlay);
+                        var rules = document.createElement("p");
+                        rules.innerHTML = Constants.RULES;
+                        var scoring = document.createElement("p");
+                        scoring.innerHTML = Constants.SCORING;
+                        _this.setHeading("rgb(G,u,ess)");
+                        _this.setSubtitle("A guessing game for people who think they're realllly good at colour matching");
+                        _this.setContent(rules);
+                        _this.setContent(scoring);
+                        _this.setFooter(footer);
+                        return _this;
+                    }
+                    return StartingModal;
+                }(ui.Modal));
+                ui.StartingModal = StartingModal;
+            })(ui = game.ui || (game.ui = {}));
+        })(game = rgbguess.game || (rgbguess.game = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
 ///<reference path='events/submissionevent.ts'/>
 ///<reference path='user/user.ts'/>
 ///<reference path='game/ui/canvasutils.ts'/>
 ///<reference path='game/ui/ui.ts'/>
 ///<reference path='game/ui/RGB.ts'/>
+///<reference path='game/ui/StartingModal.ts'/>
+///<reference path='constants/constants.ts'/>
 console.log("Welcome to rgbGuess!");
 var Events = com.rgbguess.events;
 var CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
 var RGB = com.rgbguess.game.ui.RGB;
+var StartingModal = com.rgbguess.game.ui.StartingModal;
 var UIControls = com.rgbguess.game.ui.UIControls;
 var User = com.rgbguess.user.User;
+var Constants = com.rgbguess.constants;
 var com;
 (function (com) {
     var rgbguess;
@@ -497,6 +615,33 @@ var com;
             }
             Main.prototype.start = function () {
                 this.uiControls.initUI();
+                var modal = new StartingModal();
+                /*let buttonTut = document.createElement("input");
+                buttonTut.type = "button";
+                buttonTut.className = "primary"
+                buttonTut.value = "Play Tutorial";
+                
+                let buttonPlay = document.createElement("input");
+                buttonPlay.type = "button";
+                buttonPlay.className = "special"
+                buttonPlay.value = "START";
+    
+                let footer = document.createElement("div");
+                footer.appendChild(buttonTut);
+                footer.appendChild(buttonPlay);
+    
+                let rules = document.createElement("p");
+                rules.innerHTML = Constants.RULES;
+                let scoring = document.createElement("p");
+                scoring.innerHTML = Constants.SCORING;
+    
+                modal.setHeading("rgb(G,u,ess)");
+                modal.setSubtitle("A guessing game for people who think they're realllly good at colour matching");
+                modal.setContent(rules);
+                modal.setContent(scoring);
+                modal.setFooter(footer);*/
+                modal.construct();
+                modal.show();
             };
             Main.prototype.validatePassKey = function (colourValueInputElement, event) {
                 this.uiControls.validatePassKey(colourValueInputElement, event);
