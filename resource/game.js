@@ -85,6 +85,7 @@ var com;
                         if (isNaN(textBoxValue) || textBoxValue > 255) {
                             colourValueInputElement.value = Number(255).toString();
                         }
+                        console.log(event.keyCode);
                         switch (event.keyCode.valueOf()) {
                             case 32: // space bar d -> go forward and wrap around
                                 if (colourValueInputElement.value.length >= 3) {
@@ -96,6 +97,12 @@ var com;
                                 break;
                             case 65: // a -> go back and wrap around
                                 nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 3 : parseInt(colourValueTextBoxIndex) - 1;
+                                break;
+                            case 87: // w -> increment value
+                                colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) + 1).toString();
+                                break;
+                            case 83: // s -> decrement value
+                                colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) - 1).toString();
                                 break;
                             case 8: // backspace -> go back and stop at 1
                                 if (colourValueInputElement.value.length == 0) {
@@ -449,9 +456,6 @@ var com;
                         this.closeButton.innerHTML = "&times;";
                         this.modal.appendChild(this.closeButton);
                         //this.modalContext.style.display = "none";
-                        this.closeButton.addEventListener("click", function (e) {
-                            document.getElementById("modal").style.display = "none";
-                        });
                     }
                     ;
                     Modal.prototype.show = function () {
@@ -459,6 +463,7 @@ var com;
                     };
                     Modal.prototype.close = function () {
                         this.modalContext.style.display = "none";
+                        this.cb();
                         console.log("closing");
                     };
                     Modal.prototype.setHeading = function (heading) {
@@ -483,6 +488,14 @@ var com;
                         this.modal.appendChild(this.content);
                         this.modal.appendChild(this.footer);
                         this.modalContext.appendChild(this.modal);
+                        var cb = this.cb;
+                        this.closeButton.addEventListener("click", function (e) {
+                            document.getElementById("modal").style.display = "none";
+                            cb();
+                        });
+                    };
+                    Modal.prototype.setCancelCallback = function (cb) {
+                        this.cb = cb;
                     };
                     Modal.prototype.destroy = function () {
                         this.close();
@@ -495,8 +508,36 @@ var com;
         })(game = rgbguess.game || (rgbguess.game = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
+///<reference path='rgbevent.ts'/>
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var events;
+        (function (events) {
+            events.START_EVENT = "start";
+            var StartEvent = /** @class */ (function (_super) {
+                __extends(StartEvent, _super);
+                function StartEvent() {
+                    return _super.call(this, "") || this;
+                }
+                StartEvent.prototype.dispatch = function () {
+                    var event = new CustomEvent(events.START_EVENT, {
+                        detail: {
+                            startTime: ""
+                        }
+                    });
+                    this.eventBus.dispatchEvent(event);
+                };
+                return StartEvent;
+            }(events.RGBEvent));
+            events.StartEvent = StartEvent;
+        })(events = rgbguess.events || (rgbguess.events = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
 ///<reference path='Modal.ts'/>
 ///<reference path='../../constants/constants.ts'/>
+///<reference path='../../events/StartEvent.ts'/>
 var com;
 (function (com) {
     var rgbguess;
@@ -506,6 +547,7 @@ var com;
             var ui;
             (function (ui) {
                 var Constants = com.rgbguess.constants;
+                var StartEvent = com.rgbguess.events.StartEvent;
                 var StartingModal = /** @class */ (function (_super) {
                     __extends(StartingModal, _super);
                     function StartingModal() {
@@ -530,6 +572,14 @@ var com;
                         _this.setContent(rules);
                         _this.setContent(scoring);
                         _this.setFooter(footer);
+                        _this.setCancelCallback(function (e) {
+                            console.log("Starting Game");
+                            new StartEvent().dispatch();
+                        });
+                        buttonPlay.addEventListener("click", function (e) {
+                            console.log("Starting Game");
+                            new StartEvent().dispatch();
+                        });
                         return _this;
                     }
                     return StartingModal;
@@ -563,11 +613,17 @@ var com;
                 this.canvasUtils = new CanvasUtils();
                 this.uiControls = new UIControls();
             }
-            Main.prototype.start = function () {
+            Main.prototype.initialize = function () {
                 this.uiControls.initUI();
                 var modal = new StartingModal();
                 modal.construct();
                 modal.show();
+                document.getElementById("side-top").style.display = "none";
+                document.getElementById("control-bar").style.display = "none";
+            };
+            Main.prototype.start = function () {
+                document.getElementById("modal").style.display = "none";
+                this.canvasUtils.changeColour();
             };
             Main.prototype.validatePassKey = function (colourValueInputElement, event) {
                 this.uiControls.validatePassKey(colourValueInputElement, event);
@@ -595,17 +651,29 @@ function gameLoop() {
  * Event Listers
  */
 window.onload = function (event) {
-    application.start();
+    application.initialize();
     gameLoop();
-    var fiveMinutes = 60 * 2;
-    var display = document.querySelector('#timer');
-    startTimer(fiveMinutes, display);
 };
 window.addEventListener(Events.SUBMISSION_EVENT, function (e) {
     var detail = e.detail;
     application.checkSubmission(new RGB(detail.r, detail.g, detail.b));
 }, false);
+window.addEventListener(Events.START_EVENT, function (e) {
+    console.log("received starting event");
+    var fiveMinutes = 60 * 2;
+    var display = document.querySelector('#timer');
+    startTimer(fiveMinutes, display);
+    document.getElementById("side-top").style.display = "block";
+    document.getElementById("control-bar").style.display = "block";
+    application.start();
+}, false);
+/**
+ * Timer
+ * @param duration
+ * @param display
+ */
 function startTimer(duration, display) {
+    console.log("starting timer");
     var timer = duration;
     var minutes;
     var seconds;
@@ -617,9 +685,15 @@ function startTimer(duration, display) {
         s_minutes = minutes < 10 ? "0" + minutes : minutes.toString();
         s_seconds = seconds < 10 ? "0" + seconds : seconds.toString();
         display.textContent = s_minutes + ":" + s_seconds;
-        if (--timer < 0) {
+        timer = timer - 1;
+        if (duration - timer == 1) {
+            document.getElementById("modal").style.display = "none";
+        }
+        if (timer < 0) {
             timer = duration;
             clearInterval(handler);
+            document.getElementById("side-top").style.display = "none";
+            document.getElementById("control-bar").style.display = "none";
         }
     }, 1000);
 }

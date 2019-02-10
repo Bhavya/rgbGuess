@@ -1,9 +1,11 @@
 ///<reference path='Modal.ts'/>
 ///<reference path='../../constants/constants.ts'/>
+///<reference path='../../events/StartEvent.ts'/>
 
 module com.rgbguess.game.ui {
 
     import Constants = com.rgbguess.constants;
+    import StartEvent = com.rgbguess.events.StartEvent;
 
     export class StartingModal extends Modal {
 
@@ -14,7 +16,7 @@ module com.rgbguess.game.ui {
             buttonTut.type = "button";
             buttonTut.className = "primary"
             buttonTut.value = "Play Tutorial";
-            
+
             let buttonPlay = document.createElement("input");
             buttonPlay.type = "button";
             buttonPlay.className = "special"
@@ -34,6 +36,16 @@ module com.rgbguess.game.ui {
             this.setContent(rules);
             this.setContent(scoring);
             this.setFooter(footer);
+
+            this.setCancelCallback(function (e) {
+                console.log("Starting Game");
+                new StartEvent().dispatch()
+            });
+
+            buttonPlay.addEventListener("click", function (e) {
+                console.log("Starting Game");
+                new StartEvent().dispatch()
+            });
         }
     }
 }

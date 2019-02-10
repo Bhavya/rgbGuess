@@ -29,7 +29,7 @@ module com.rgbguess.game.ui {
                 colourValueInputElement.value = Number(255).toString();
             }
 
-
+            console.log(event.keyCode);
             switch (event.keyCode.valueOf()) {
                 case 32: // space bar d -> go forward and wrap around
                     if (colourValueInputElement.value.length >= 3) {
@@ -41,6 +41,12 @@ module com.rgbguess.game.ui {
                     break;
                 case 65: // a -> go back and wrap around
                     nextIndex = (parseInt(colourValueTextBoxIndex) - 1 == 0) ? 3 : parseInt(colourValueTextBoxIndex) - 1;
+                    break;
+                case 87: // w -> increment value
+                    colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) + 1).toString();
+                    break;
+                case 83: // s -> decrement value
+                    colourValueInputElement.value = new String(parseInt(colourValueInputElement.value) - 1).toString();
                     break;
                 case 8: // backspace -> go back and stop at 1
                     if (colourValueInputElement.value.length == 0) {

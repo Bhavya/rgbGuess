@@ -13,6 +13,8 @@ module com.rgbguess.game.ui {
         private content = document.createElement("div");
         private footer = this.footer = document.createElement("footer");
 
+        private cb;
+
         constructor() {
             this.modal.className = "modal-content";
             this.modalContext.appendChild(this.modal);
@@ -21,10 +23,6 @@ module com.rgbguess.game.ui {
             this.modal.appendChild(this.closeButton);
 
             //this.modalContext.style.display = "none";
-
-            this.closeButton.addEventListener("click", function (e) {
-                (<HTMLDivElement>document.getElementById("modal")).style.display = "none";
-            })
         }
 
         show(): void {
@@ -33,6 +31,7 @@ module com.rgbguess.game.ui {
 
         close(): void {
             this.modalContext.style.display = "none";
+            this.cb();
             console.log("closing");
         }
 
@@ -63,6 +62,16 @@ module com.rgbguess.game.ui {
             this.modal.appendChild(this.content);
             this.modal.appendChild(this.footer);
             this.modalContext.appendChild(this.modal);
+
+            let cb = this.cb;
+            this.closeButton.addEventListener("click", function (e) {
+                (<HTMLDivElement>document.getElementById("modal")).style.display = "none";
+                cb();
+            });
+        }
+
+        setCancelCallback(cb) {
+            this.cb = cb;
         }
 
         destroy() {

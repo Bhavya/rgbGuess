@@ -24,11 +24,18 @@ module com.rgbguess {
         constructor() {
         }
 
-        start() {
+        initialize() {
             this.uiControls.initUI();
             let modal: StartingModal = new StartingModal();
             modal.construct();
             modal.show();
+            (<HTMLDivElement>document.getElementById("side-top")).style.display = "none";
+            (<HTMLDivElement>document.getElementById("control-bar")).style.display = "none";
+        }
+
+        start() {
+            (<HTMLDivElement>document.getElementById("modal")).style.display = "none";
+            this.canvasUtils.changeColour();
         }
 
         validatePassKey(colourValueInputElement: HTMLInputElement, event: KeyboardEvent) {
@@ -59,12 +66,8 @@ function gameLoop() {
  * Event Listers
  */
 window.onload = function (event) {
-    application.start();
+    application.initialize();
     gameLoop();
-
-    let fiveMinutes = 60 * 2;
-    var display = document.querySelector('#timer');
-    startTimer(fiveMinutes, display);
 }
 
 window.addEventListener(Events.SUBMISSION_EVENT, function (e: CustomEvent) {
@@ -72,7 +75,24 @@ window.addEventListener(Events.SUBMISSION_EVENT, function (e: CustomEvent) {
     application.checkSubmission(new RGB(detail.r, detail.g, detail.b));
 }, false);
 
+window.addEventListener(Events.START_EVENT, function (e: CustomEvent) {
+    console.log("received starting event");
+    let fiveMinutes = 60 * 2;
+    var display = document.querySelector('#timer');
+    startTimer(fiveMinutes, display);
+    (<HTMLDivElement>document.getElementById("side-top")).style.display = "block";
+    (<HTMLDivElement>document.getElementById("control-bar")).style.display = "block";
+    application.start();
+}, false);
+
+/**
+ * Timer
+ * @param duration 
+ * @param display 
+ */
+
 function startTimer(duration, display) {
+    console.log("starting timer");
     var timer: number = duration;
     var minutes: number;
     var seconds: number;
@@ -88,9 +108,15 @@ function startTimer(duration, display) {
 
         display.textContent = s_minutes + ":" + s_seconds;
 
-        if (--timer < 0) {
+        timer = timer - 1;
+        if (duration - timer == 1) {
+            (<HTMLDivElement>document.getElementById("modal")).style.display = "none";
+        }
+        if (timer < 0) {
             timer = duration;
             clearInterval(handler);
+            (<HTMLDivElement>document.getElementById("side-top")).style.display = "none";
+            (<HTMLDivElement>document.getElementById("control-bar")).style.display = "none";
         }
     }, 1000);
 }
