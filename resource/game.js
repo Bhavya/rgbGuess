@@ -77,20 +77,8 @@ var com;
                         ; //vertical resolution (?) - increase for better looking text
                     }
                     UIControls.prototype.initUI = function () {
-                        this.drawStartButton();
-                    };
-                    UIControls.prototype.drawStartButton = function () {
-                        var buttonWidth = new Number(180);
-                        var buttonHeight = new Number(50);
-                        var buttonX = new Number(this.canvas.width / 2 - buttonWidth.valueOf() / 2);
-                        var buttonY = new Number(this.canvas.height / 2 - buttonHeight.valueOf());
-                        var button = new Button(buttonX.valueOf(), buttonY.valueOf(), buttonWidth.valueOf(), buttonHeight.valueOf());
-                        button.draw();
-                    };
-                    UIControls.prototype.clearStartButton = function () {
                     };
                     UIControls.prototype.validatePassKey = function (colourValueInputElement, event) {
-                        console.log(event.keyCode);
                         var colourValueTextBoxIndex = colourValueInputElement.id;
                         var nextIndex = parseInt(colourValueTextBoxIndex);
                         var textBoxValue = Number(colourValueInputElement.value);
@@ -125,6 +113,10 @@ var com;
                                 break;
                             case 13: // enter -> submit
                                 this.submit();
+                                document.getElementById("1").value = "",
+                                    document.getElementById("2").value = "",
+                                    document.getElementById("3").value = "";
+                                nextIndex = 1;
                                 break;
                             default: // if you have typed 3 digits go to the next box
                                 if (event.keyCode >= 48
@@ -151,41 +143,6 @@ var com;
                     return UIControls;
                 }());
                 ui.UIControls = UIControls;
-                var Button = /** @class */ (function () {
-                    function Button(x, y, w, h) {
-                        this.x = x;
-                        this.y = y;
-                        this.w = w;
-                        this.h = h;
-                        this.canvas = document.getElementById('canvas');
-                        this.context = this.canvas.getContext("2d");
-                        console.log("new Button");
-                    }
-                    Button.prototype.getX = function () {
-                        return this.x;
-                    };
-                    Button.prototype.getY = function () {
-                        return this.y;
-                    };
-                    Button.prototype.getWidth = function () {
-                        return this.w;
-                    };
-                    Button.prototype.getHeight = function () {
-                        return this.h;
-                    };
-                    Button.prototype.draw = function () {
-                        var path = new Path2D();
-                        path.rect(this.x, this.y, this.w, this.h);
-                        path.closePath();
-                        this.context.fillStyle = "#FFFFFF";
-                        this.context.fillStyle = "rgba(225,225,225,0.5)";
-                        this.context.fill(path);
-                        this.context.lineWidth = 2;
-                        this.context.strokeStyle = "#000000";
-                        this.context.stroke(path);
-                    };
-                    return Button;
-                }());
             })(ui = game.ui || (game.ui = {}));
         })(game = rgbguess.game || (rgbguess.game = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
@@ -248,14 +205,7 @@ var com;
     (function (rgbguess) {
         var user;
         (function (user) {
-            var User = /** @class */ (function () {
-                function User() {
-                }
-                User.prototype.updateScore = function (score, timeStamp) {
-                };
-                return User;
-            }());
-            user.User = User;
+            user.score = 0;
         })(user = rgbguess.user || (rgbguess.user = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
@@ -361,19 +311,20 @@ var LiteHashMap = /** @class */ (function () {
 ///<reference path='lib/Dictionary.ts'/>
 var com;
 (function (com) {
-    var rgbGuess;
-    (function (rgbGuess) {
+    var rgbguess;
+    (function (rgbguess) {
         var Config;
         (function (Config) {
             Config.config = new LiteHashMap();
             Config.config.put("mode", 0);
             Config.config.put("hi", "hi");
-        })(Config = rgbGuess.Config || (rgbGuess.Config = {}));
-    })(rgbGuess = com.rgbGuess || (com.rgbGuess = {}));
+        })(Config = rgbguess.Config || (rgbguess.Config = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
 ///<reference path='../../api/imagefetcher.ts'/>
 ///<reference path='../../constants/constants.ts'/>
 ///<reference path='../../config.ts'/>
+///<reference path='../../user/user.ts'/>
 var com;
 (function (com) {
     var rgbguess;
@@ -384,7 +335,8 @@ var com;
             (function (ui) {
                 var ImageFetcher = com.rgbguess.api.ImageFetcher;
                 var RGB = com.rgbguess.game.ui.RGB;
-                var config = com.rgbGuess.Config.config;
+                var User = com.rgbguess.user;
+                var config = com.rgbguess.Config.config;
                 var CanvasUtils = /** @class */ (function () {
                     function CanvasUtils() {
                         this.pixelColour = new RGB(0, 0, 0);
@@ -399,8 +351,6 @@ var com;
                         return this.context;
                     };
                     CanvasUtils.prototype.clearCanvas = function () {
-                        this.context.fillStyle = "black";
-                        this.context.fillRect(0, 0, 1280, 720);
                     };
                     CanvasUtils.prototype.change = function () {
                         if (this.mode == 0) {
@@ -446,13 +396,17 @@ var com;
                     };
                     CanvasUtils.prototype.checkAccuracy = function (rgb, callback) {
                         try {
+                            console.log(rgb.toString());
+                            console.log(this.pixelColour.toString());
                             var accuracy = 0;
-                            var x = this.pixelColour.getR() - rgb.getR();
-                            var y = this.pixelColour.getG() - rgb.getG();
-                            var z = this.pixelColour.getB() - rgb.getB();
-                            var alt = Math.abs(Math.atan2(y, Math.sqrt(x * x + z * z)));
-                            var unscaledAccuracy = 100 - Math.round(alt * 100);
-                            accuracy = this.scaledAccuracy(unscaledAccuracy);
+                            var x = Math.abs(this.pixelColour.getR() - rgb.getR());
+                            var y = Math.abs(this.pixelColour.getG() - rgb.getG());
+                            var z = Math.abs(this.pixelColour.getB() - rgb.getB());
+                            var percentX = 1 - x / 255;
+                            var percentY = 1 - y / 255;
+                            var percentZ = 1 - z / 255;
+                            accuracy = 100 * (percentX + percentY + percentZ) / 3;
+                            User.score += Math.round(accuracy * 100);
                             var loggingString = accuracy + "%";
                             console.log(loggingString);
                         }
@@ -463,12 +417,6 @@ var com;
                             callback();
                             console.log("callback");
                         }
-                    };
-                    CanvasUtils.prototype.scaledAccuracy = function (angle) {
-                        if (angle < 70) {
-                            return 0;
-                        }
-                        return 100 * (angle - 70) / 30;
                     };
                     return CanvasUtils;
                 }());
@@ -548,6 +496,7 @@ var com;
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
 ///<reference path='Modal.ts'/>
+///<reference path='../../constants/constants.ts'/>
 var com;
 (function (com) {
     var rgbguess;
@@ -556,6 +505,7 @@ var com;
         (function (game) {
             var ui;
             (function (ui) {
+                var Constants = com.rgbguess.constants;
                 var StartingModal = /** @class */ (function (_super) {
                     __extends(StartingModal, _super);
                     function StartingModal() {
@@ -602,7 +552,7 @@ var CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
 var RGB = com.rgbguess.game.ui.RGB;
 var StartingModal = com.rgbguess.game.ui.StartingModal;
 var UIControls = com.rgbguess.game.ui.UIControls;
-var User = com.rgbguess.user.User;
+var User = com.rgbguess.user;
 var Constants = com.rgbguess.constants;
 var com;
 (function (com) {
@@ -616,30 +566,6 @@ var com;
             Main.prototype.start = function () {
                 this.uiControls.initUI();
                 var modal = new StartingModal();
-                /*let buttonTut = document.createElement("input");
-                buttonTut.type = "button";
-                buttonTut.className = "primary"
-                buttonTut.value = "Play Tutorial";
-                
-                let buttonPlay = document.createElement("input");
-                buttonPlay.type = "button";
-                buttonPlay.className = "special"
-                buttonPlay.value = "START";
-    
-                let footer = document.createElement("div");
-                footer.appendChild(buttonTut);
-                footer.appendChild(buttonPlay);
-    
-                let rules = document.createElement("p");
-                rules.innerHTML = Constants.RULES;
-                let scoring = document.createElement("p");
-                scoring.innerHTML = Constants.SCORING;
-    
-                modal.setHeading("rgb(G,u,ess)");
-                modal.setSubtitle("A guessing game for people who think they're realllly good at colour matching");
-                modal.setContent(rules);
-                modal.setContent(scoring);
-                modal.setFooter(footer);*/
                 modal.construct();
                 modal.show();
             };
@@ -650,6 +576,8 @@ var com;
                 var canvasUtils = this.canvasUtils;
                 this.canvasUtils.checkAccuracy(rgb, function () {
                     canvasUtils.changeColour();
+                    var score = document.getElementById("score");
+                    score.innerHTML = User.score.toString();
                 });
                 //this.canvasUtils.identifyPixelColour();
             };
@@ -669,11 +597,32 @@ function gameLoop() {
 window.onload = function (event) {
     application.start();
     gameLoop();
+    var fiveMinutes = 60 * 2;
+    var display = document.querySelector('#timer');
+    startTimer(fiveMinutes, display);
 };
 window.addEventListener(Events.SUBMISSION_EVENT, function (e) {
     var detail = e.detail;
     application.checkSubmission(new RGB(detail.r, detail.g, detail.b));
 }, false);
+function startTimer(duration, display) {
+    var timer = duration;
+    var minutes;
+    var seconds;
+    var s_minutes;
+    var s_seconds;
+    var handler = setInterval(function () {
+        minutes = Math.floor(timer / 60);
+        seconds = timer % 60;
+        s_minutes = minutes < 10 ? "0" + minutes : minutes.toString();
+        s_seconds = seconds < 10 ? "0" + seconds : seconds.toString();
+        display.textContent = s_minutes + ":" + s_seconds;
+        if (--timer < 0) {
+            timer = duration;
+            clearInterval(handler);
+        }
+    }, 1000);
+}
 /**
 * APIs
 */

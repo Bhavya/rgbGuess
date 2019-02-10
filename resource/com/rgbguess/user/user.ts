@@ -1,11 +1,5 @@
 module com.rgbguess.user {
-    export class User {
-        totalScore: number;
-        scores: Array<number>;
-        constructor() { }
+    
+    export var score: number = 0;
 
-        updateScore(score: number, timeStamp: number): void {
-
-        }
-    }
 }

@@ -1,6 +1,9 @@
 ///<reference path='Modal.ts'/>
+///<reference path='../../constants/constants.ts'/>
 
 module com.rgbguess.game.ui {
+
+    import Constants = com.rgbguess.constants;
 
     export class StartingModal extends Modal {
 

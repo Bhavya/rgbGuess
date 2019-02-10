@@ -1,13 +1,15 @@
 ///<reference path='../../api/imagefetcher.ts'/>
 ///<reference path='../../constants/constants.ts'/>
 ///<reference path='../../config.ts'/>
+///<reference path='../../user/user.ts'/>
 
 
 module com.rgbguess.game.ui {
 
     import ImageFetcher = com.rgbguess.api.ImageFetcher;
     import RGB = com.rgbguess.game.ui.RGB;
-    import config = com.rgbGuess.Config.config;
+    import User = com.rgbguess.user;
+    import config = com.rgbguess.Config.config;
 
     export class CanvasUtils {
         private canvas: HTMLCanvasElement;
@@ -31,8 +33,7 @@ module com.rgbguess.game.ui {
         }
 
         clearCanvas() {
-            this.context.fillStyle = "black";
-            this.context.fillRect(0, 0, 1280, 720);
+
         }
 
         change() {
@@ -92,16 +93,21 @@ module com.rgbguess.game.ui {
 
         checkAccuracy(rgb: RGB, callback): void {
             try {
+                console.log(rgb.toString());
+                console.log(this.pixelColour.toString());
                 let accuracy: number = 0;
 
-                let x = this.pixelColour.getR() - rgb.getR();
-                let y = this.pixelColour.getG() - rgb.getG();
-                let z = this.pixelColour.getB() - rgb.getB();
+                let x = Math.abs(this.pixelColour.getR() - rgb.getR());
+                let y = Math.abs(this.pixelColour.getG() - rgb.getG());
+                let z = Math.abs(this.pixelColour.getB() - rgb.getB());
 
-                let alt = Math.abs(Math.atan2(y, Math.sqrt(x * x + z * z)));
-                let unscaledAccuracy = 100 - Math.round(alt * 100);
+                let percentX = 1 - x / 255;
+                let percentY = 1 - y / 255;
+                let percentZ = 1 - z / 255;
 
-                accuracy = this.scaledAccuracy(unscaledAccuracy);
+                accuracy = 100 * (percentX + percentY + percentZ) / 3;
+                User.score += Math.round(accuracy*100);
+
                 let loggingString = `${accuracy}%`;
                 console.log(loggingString);
             } catch (e) {
@@ -111,13 +117,5 @@ module com.rgbguess.game.ui {
                 console.log("callback");
             }
         }
-
-        private scaledAccuracy(angle: number): number {
-        if (angle < 70) {
-            return 0;
-        }
-
-        return 100 * (angle - 70) / 30;
     }
-}
 }
