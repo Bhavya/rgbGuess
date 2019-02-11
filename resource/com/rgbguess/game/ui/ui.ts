@@ -26,7 +26,7 @@ module com.rgbguess.game.ui {
 
             let textBoxValue = Number(colourValueInputElement.value);
 
-            if (isNaN(textBoxValue) || textBoxValue > 255) {
+            if (isNaN(textBoxValue)) {
                 colourValueInputElement.value = Number(255).toString();
             }
             let currentValue = 0;

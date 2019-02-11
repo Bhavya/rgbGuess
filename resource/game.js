@@ -83,7 +83,7 @@ var com;
                         var colourValueTextBoxIndex = colourValueInputElement.id;
                         var nextIndex = parseInt(colourValueTextBoxIndex);
                         var textBoxValue = Number(colourValueInputElement.value);
-                        if (isNaN(textBoxValue) || textBoxValue > 255) {
+                        if (isNaN(textBoxValue)) {
                             colourValueInputElement.value = Number(255).toString();
                         }
                         var currentValue = 0;
