@@ -24,13 +24,18 @@ module com.rgbguess.game.ui {
             let colourValueTextBoxIndex = colourValueInputElement.id;
             let nextIndex: number = parseInt(colourValueTextBoxIndex);
 
-            let textBoxValue = Number(colourValueInputElement.value);
+            this.stripNonNumericInTextBox(colourValueInputElement);
 
-            if (isNaN(textBoxValue)) {
+            let inputValue = colourValueInputElement.value;
+
+            let textBoxValue = Number(inputValue);
+            if (isNaN(textBoxValue) || textBoxValue > 255) {
                 colourValueInputElement.value = Number(255).toString();
             }
+
             let currentValue = 0;
             console.log(event.keyCode);
+
             switch (event.keyCode.valueOf()) {
                 case 32: // space bar d -> go forward and wrap around
                     if (colourValueInputElement.value.length >= 3) {
@@ -94,12 +99,23 @@ module com.rgbguess.game.ui {
             }
 
             document.getElementById(nextIndex.toString()).focus();
+            this.stripNonNumericInTextBox(<HTMLInputElement>document.getElementById(nextIndex.toString()));
             this.updateColourPreview(
                 Number((<HTMLInputElement>document.getElementById("1")).value).valueOf(),
                 Number((<HTMLInputElement>document.getElementById("2")).value).valueOf(),
                 Number((<HTMLInputElement>document.getElementById("3")).value).valueOf(),
             );
         }
+
+        stripNonNumericInTextBox(colourValueInputElement: HTMLInputElement) {
+            let value: string = colourValueInputElement.value;
+            value = value.replace(/[^0-9]/g, '');
+            colourValueInputElement.value = value;
+        }
+
+        stripNonNumeric(value: string): string {
+            return value.replace(/[^0-9]/g, '');
+        }   
 
         updateColourPreview(r: number, g: number, b: number) {
             let colourPreviewer = <HTMLDivElement>document.getElementById("colour-preview");

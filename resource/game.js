@@ -82,8 +82,10 @@ var com;
                     UIControls.prototype.validatePassKey = function (colourValueInputElement, event) {
                         var colourValueTextBoxIndex = colourValueInputElement.id;
                         var nextIndex = parseInt(colourValueTextBoxIndex);
-                        var textBoxValue = Number(colourValueInputElement.value);
-                        if (isNaN(textBoxValue)) {
+                        this.stripNonNumericInTextBox(colourValueInputElement);
+                        var inputValue = colourValueInputElement.value;
+                        var textBoxValue = Number(inputValue);
+                        if (isNaN(textBoxValue) || textBoxValue > 255) {
                             colourValueInputElement.value = Number(255).toString();
                         }
                         var currentValue = 0;
@@ -142,7 +144,16 @@ var com;
                                 break;
                         }
                         document.getElementById(nextIndex.toString()).focus();
+                        this.stripNonNumericInTextBox(document.getElementById(nextIndex.toString()));
                         this.updateColourPreview(Number(document.getElementById("1").value).valueOf(), Number(document.getElementById("2").value).valueOf(), Number(document.getElementById("3").value).valueOf());
+                    };
+                    UIControls.prototype.stripNonNumericInTextBox = function (colourValueInputElement) {
+                        var value = colourValueInputElement.value;
+                        value = value.replace(/[^0-9]/g, '');
+                        colourValueInputElement.value = value;
+                    };
+                    UIControls.prototype.stripNonNumeric = function (value) {
+                        return value.replace(/[^0-9]/g, '');
                     };
                     UIControls.prototype.updateColourPreview = function (r, g, b) {
                         var colourPreviewer = document.getElementById("colour-preview");
