@@ -29,5 +29,5 @@ module com.rgbguess.constants {
 
     export var END_MESSAGE = `<center><h1>GAME OVER<h1></center>`;
 
-    export var CREDITS = `<center>RGBGuess and game audio © Bhavya Kashyap 2019</center><br/><br/>`
+    export var CREDITS = `<center>RGBGuess and game audio © Bhavya Kashyap 2019</center><br/>`;
 }

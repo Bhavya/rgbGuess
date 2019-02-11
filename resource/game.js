@@ -56,7 +56,7 @@ var com;
             constants.RULES = "How to play:\n                        <ul>\n                            <li>You will guess the RGB value of the background, and type your guess in as quickly as possible. Once you\n                                submit your guess, the colour will change.</li>\n                            <li>You will have 2 minutes to make as many close guesses as possible.</li>\n                        </ul>";
             constants.SCORING = "Contols:\n                            <ul>\n                                <li>W: increment value in input field.\n                                </li>\n                                <li>S: decrement value in input field.\n                                </li>\n                                <li>A: move left.\n                                </li>\n                                <li>D: move right\n                                </li>\n                                <li>C: clear input field.\n                                </li>\n                                <li>Z: Clear all input fields.\n                                </li>\n                                <li>Enter: submit (must be on G input)\n                                </li>\n                            </ul>";
             constants.END_MESSAGE = "<center><h1>GAME OVER<h1></center>";
-            constants.CREDITS = "<center>RGBGuess and game audio \u00A9 Bhavya Kashyap 2019</center><br/><br/>";
+            constants.CREDITS = "<center>RGBGuess and game audio \u00A9 Bhavya Kashyap 2019</center><br/>";
         })(constants = rgbguess.constants || (rgbguess.constants = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
