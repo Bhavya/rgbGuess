@@ -529,7 +529,7 @@ var com;
                         this.modal.className = "modal-content";
                         this.modalContext.appendChild(this.modal);
                         this.closeButton.className = "close";
-                        this.closeButton.innerHTML = "&times;";
+                        //this.closeButton.innerHTML = "&times;";
                         this.modal.appendChild(this.closeButton);
                         //this.modalContext.style.display = "none";
                     }
@@ -687,7 +687,8 @@ var com;
                         var endingMessage = document.createElement("p");
                         endingMessage.innerHTML = Constants.END_MESSAGE;
                         var score = document.createElement("p");
-                        score.innerHTML = "<center>SCORE: " + User.score + "</center><br/><br/>";
+                        var formattedScore = User.score.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                        score.innerHTML = "<center><h1>SCORE: " + formattedScore + "</h1></center><br/><br/>";
                         _this.setHeading("rgb(G,u,ess)");
                         _this.setSubtitle("A guessing game for people who think they're realllly good at colour matching");
                         _this.setContent(endingMessage);

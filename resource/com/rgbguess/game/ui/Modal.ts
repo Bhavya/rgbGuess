@@ -19,7 +19,7 @@ module com.rgbguess.game.ui {
             this.modal.className = "modal-content";
             this.modalContext.appendChild(this.modal);
             this.closeButton.className = "close";
-            this.closeButton.innerHTML = "&times;";
+            //this.closeButton.innerHTML = "&times;";
             this.modal.appendChild(this.closeButton);
 
             //this.modalContext.style.display = "none";

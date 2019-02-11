@@ -18,7 +18,8 @@ module com.rgbguess.game.ui {
             let endingMessage = document.createElement("p");
             endingMessage.innerHTML = Constants.END_MESSAGE;
             let score = document.createElement("p");
-            score.innerHTML = `<center>SCORE: ${User.score}</center><br/><br/>`;
+            let formattedScore = User.score.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+            score.innerHTML = `<center><h1>SCORE: ${formattedScore}</h1></center><br/><br/>`;
 
             this.setHeading("rgb(G,u,ess)");
             this.setSubtitle("A guessing game for people who think they're realllly good at colour matching");
