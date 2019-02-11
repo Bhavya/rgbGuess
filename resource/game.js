@@ -190,12 +190,18 @@ var com;
     (function (rgbguess) {
         var events;
         (function (events) {
+            var RGB = com.rgbguess.game.ui.RGB;
             events.SUBMISSION_EVENT = "submission";
             var SubmissionEvent = /** @class */ (function (_super) {
                 __extends(SubmissionEvent, _super);
                 function SubmissionEvent(rgb) {
                     var _this = _super.call(this, rgb) || this;
-                    _this.rgb = rgb;
+                    if (rgb == null) {
+                        _this.rgb = new RGB(0, 0, 0);
+                    }
+                    else {
+                        _this.rgb = rgb;
+                    }
                     return _this;
                 }
                 SubmissionEvent.prototype.dispatch = function () {
@@ -379,6 +385,7 @@ var com;
 ///<reference path='../../constants/constants.ts'/>
 ///<reference path='../../config.ts'/>
 ///<reference path='../../user/user.ts'/>
+///<reference path='RGB.ts'/>
 ///<reference path='Overlay.ts'/>
 var com;
 (function (com) {

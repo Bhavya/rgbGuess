@@ -2,6 +2,7 @@
 ///<reference path='../../constants/constants.ts'/>
 ///<reference path='../../config.ts'/>
 ///<reference path='../../user/user.ts'/>
+///<reference path='RGB.ts'/>
 ///<reference path='Overlay.ts'/>
 
 

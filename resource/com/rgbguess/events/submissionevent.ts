@@ -11,7 +11,12 @@ module com.rgbguess.events {
 
         constructor(rgb: RGB) {
             super(rgb);
-            this.rgb = rgb;
+
+            if(rgb == null) {
+                this.rgb = new RGB(0,0,0);
+            } else {
+                this.rgb = rgb;
+            }
         }
 
         dispatch() {
