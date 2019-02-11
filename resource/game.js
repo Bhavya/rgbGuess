@@ -481,6 +481,7 @@ var com;
                             var percentY = 1 - y / 255;
                             var percentZ = 1 - z / 255;
                             accuracy = 100 * (percentX + percentY + percentZ) / 3;
+                            accuracy = this.scaledAccuracy(accuracy);
                             if (accuracy <= 85) {
                                 User.score += Math.round(accuracy * 10);
                             }
@@ -501,6 +502,9 @@ var com;
                             callback();
                             console.log("callback");
                         }
+                    };
+                    CanvasUtils.prototype.scaledAccuracy = function (accuracy) {
+                        return 100 * Math.max((accuracy - 60) / 40, 0);
                     };
                     return CanvasUtils;
                 }());

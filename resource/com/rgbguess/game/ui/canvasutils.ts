@@ -109,6 +109,7 @@ module com.rgbguess.game.ui {
                 let percentZ = 1 - z / 255;
 
                 accuracy = 100 * (percentX + percentY + percentZ) / 3;
+                accuracy = this.scaledAccuracy(accuracy);
 
                 if (accuracy <= 85) {
                     User.score += Math.round(accuracy * 10);
@@ -129,6 +130,10 @@ module com.rgbguess.game.ui {
                 callback();
                 console.log("callback");
             }
+        }
+
+        scaledAccuracy(accuracy: number) {
+            return 100 * Math.max((accuracy - 60) / 40, 0);
         }
     }
 }
