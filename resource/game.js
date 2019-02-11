@@ -124,16 +124,16 @@ var com;
                                 colourValueInputElement.value = "";
                                 break;
                             case 90: // z -> clear all
-                                document.getElementById("1").value = "",
-                                    document.getElementById("2").value = "",
-                                    document.getElementById("3").value = "";
+                                document.getElementById("1").value = "000",
+                                    document.getElementById("2").value = "000",
+                                    document.getElementById("3").value = "000";
                                 nextIndex = 1;
                                 break;
                             case 13: // enter -> submit
                                 this.submit();
-                                document.getElementById("1").value = "",
-                                    document.getElementById("2").value = "",
-                                    document.getElementById("3").value = "";
+                                document.getElementById("1").value = "000",
+                                    document.getElementById("2").value = "000",
+                                    document.getElementById("3").value = "000";
                                 nextIndex = 1;
                                 break;
                             default: // if you have typed 3 digits go to the next box

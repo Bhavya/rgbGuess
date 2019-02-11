@@ -77,16 +77,16 @@ module com.rgbguess.game.ui {
                     colourValueInputElement.value = "";
                     break;
                 case 90: // z -> clear all
-                    (<HTMLInputElement>document.getElementById("1")).value = "",
-                        (<HTMLInputElement>document.getElementById("2")).value = "",
-                        (<HTMLInputElement>document.getElementById("3")).value = "";
+                    (<HTMLInputElement>document.getElementById("1")).value = "000",
+                        (<HTMLInputElement>document.getElementById("2")).value = "000",
+                        (<HTMLInputElement>document.getElementById("3")).value = "000";
                     nextIndex = 1;
                     break;
                 case 13: // enter -> submit
                     this.submit();
-                    (<HTMLInputElement>document.getElementById("1")).value = "",
-                        (<HTMLInputElement>document.getElementById("2")).value = "",
-                        (<HTMLInputElement>document.getElementById("3")).value = "";
+                    (<HTMLInputElement>document.getElementById("1")).value = "000",
+                        (<HTMLInputElement>document.getElementById("2")).value = "000",
+                        (<HTMLInputElement>document.getElementById("3")).value = "000";
                     nextIndex = 1;
                     break;
                 default: // if you have typed 3 digits go to the next box
