@@ -21,10 +21,14 @@ module com.rgbguess.game.ui {
             let formattedScore = User.score.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
             score.innerHTML = `<center><h1>SCORE: ${formattedScore}</h1></center><br/><br/>`;
 
+            let credits = document.createElement("p");
+            credits.innerHTML = Constants.CREDITS;
+
             this.setHeading("rgb(G,u,ess)");
             this.setSubtitle("A guessing game for people who think they're realllly good at colour matching");
             this.setContent(endingMessage);
             this.setContent(score);
+            this.setContent(credits);
             this.setFooter(footer);
 
             this.setCancelCallback(function (e) {
