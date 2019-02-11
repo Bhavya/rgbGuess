@@ -57,7 +57,7 @@ body {
 }
 
 .control-bar {
-	display: inline-block;
+	display: none;
 	position: absolute;
 	margin: 20 auto;
 	background: #000;
