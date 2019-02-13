@@ -543,6 +543,7 @@ var com;
                     function CanvasUtils() {
                         this.pixelColour = new RGB(0, 0, 0);
                         this.mode = 0;
+                        this.achievement = "";
                         this.canvas = document.getElementById('canvas');
                         this.context = this.canvas.getContext("2d");
                         this.imageFetcher = new ImageFetcher();
@@ -610,11 +611,25 @@ var com;
                             accuracy = 100 * (percentX + percentY + percentZ) / 3;
                             accuracy = this.scaledAccuracy(accuracy);
                             User.score += this.scoreFromAccuracy(accuracy);
+                            if (x === 0) {
+                                this.achievement = "perfect red!";
+                            }
+                            ;
+                            if (y === 0) {
+                                this.achievement = "perfect green!";
+                            }
+                            ;
+                            if (z === 0) {
+                                this.achievement = "perfect blue!";
+                            }
+                            ;
                             var loggingString = accuracy + "%";
                             accuracy = Math.round(accuracy);
+                            var subscript = "<br/><small>" + this.achievement + "</small>";
                             var overlay = new Overlay();
-                            overlay.setMessage(accuracy + "%");
+                            overlay.setMessage(accuracy + "% " + subscript);
                             overlay.blast();
+                            this.achievement = "";
                             console.log(loggingString);
                         }
                         catch (e) {
@@ -636,9 +651,11 @@ var com;
                             return Math.round(accuracy * 10);
                         }
                         else if (accuracy >= 90 && accuracy < 95) {
-                            return Math.round(accuracy * 100);
+                            this.achievement = "x50";
+                            return Math.round(accuracy * 50);
                         }
                         else if (accuracy >= 95) {
+                            this.achievement = "x100";
                             return Math.round(accuracy * 100);
                         }
                         return 0;

@@ -22,6 +22,8 @@ module com.rgbguess.game.ui {
 
         private mode: number = 0;
 
+        private achievement: string = "";
+
         constructor() {
             this.canvas = <HTMLCanvasElement>document.getElementById('canvas');
             this.context = this.canvas.getContext("2d");
@@ -111,15 +113,20 @@ module com.rgbguess.game.ui {
                 accuracy = 100 * (percentX + percentY + percentZ) / 3;
                 accuracy = this.scaledAccuracy(accuracy);
 
-
                 User.score += this.scoreFromAccuracy(accuracy);
+                if(x === 0) { this.achievement = "perfect red!"};
+                if(y === 0) { this.achievement = "perfect green!"};
+                if(z === 0) { this.achievement = "perfect blue!"};
 
                 let loggingString = `${accuracy}%`;
 
                 accuracy = Math.round(accuracy);
+                let subscript = `<br/><small>${this.achievement}</small>`
+
                 let overlay = new Overlay();
-                overlay.setMessage(`${accuracy}%`);
+                overlay.setMessage(`${accuracy}% ${subscript}`);
                 overlay.blast();
+                this.achievement = "";
                 console.log(loggingString);
             } catch (e) {
                 //
@@ -139,8 +146,10 @@ module com.rgbguess.game.ui {
             } else if (accuracy >= 85 && accuracy < 90) {
                 return Math.round(accuracy * 10);
             } else if (accuracy >= 90 && accuracy < 95) {
-                return Math.round(accuracy * 100);
+                this.achievement = "x50"
+                return Math.round(accuracy * 50);
             } else if (accuracy >= 95) {
+                this.achievement = "x100"
                 return Math.round(accuracy * 100);
             }
             return 0;

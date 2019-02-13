@@ -22,6 +22,10 @@ body {
 	text-align: center;
 }
 
+small {
+	font-size: 0.4em;
+}
+
 #canvas {
 	display: block;
 	width: 100vw;
