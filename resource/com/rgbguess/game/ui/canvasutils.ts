@@ -111,11 +111,8 @@ module com.rgbguess.game.ui {
                 accuracy = 100 * (percentX + percentY + percentZ) / 3;
                 accuracy = this.scaledAccuracy(accuracy);
 
-                if (accuracy <= 85) {
-                    User.score += Math.round(accuracy * 10);
-                } else {
-                    User.score += Math.round(accuracy * 100);
-                }
+
+                User.score += this.scoreFromAccuracy(accuracy);
 
                 let loggingString = `${accuracy}%`;
 
@@ -134,6 +131,19 @@ module com.rgbguess.game.ui {
 
         scaledAccuracy(accuracy: number) {
             return 100 * Math.max((accuracy - 60) / 40, 0);
+        }
+
+        scoreFromAccuracy(accuracy: number): number {
+            if (accuracy > 50 && accuracy < 85) {
+                return Math.round(accuracy);
+            } else if (accuracy >= 85 && accuracy < 90) {
+                return Math.round(accuracy * 10);
+            } else if (accuracy >= 90 && accuracy < 95) {
+                return Math.round(accuracy * 100);
+            } else if (accuracy >= 95) {
+                return Math.round(accuracy * 100);
+            }
+            return 0;
         }
     }
 }

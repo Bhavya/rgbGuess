@@ -482,12 +482,7 @@ var com;
                             var percentZ = 1 - z / 255;
                             accuracy = 100 * (percentX + percentY + percentZ) / 3;
                             accuracy = this.scaledAccuracy(accuracy);
-                            if (accuracy <= 85) {
-                                User.score += Math.round(accuracy * 10);
-                            }
-                            else {
-                                User.score += Math.round(accuracy * 100);
-                            }
+                            User.score += this.scoreFromAccuracy(accuracy);
                             var loggingString = accuracy + "%";
                             accuracy = Math.round(accuracy);
                             var overlay = new Overlay();
@@ -505,6 +500,21 @@ var com;
                     };
                     CanvasUtils.prototype.scaledAccuracy = function (accuracy) {
                         return 100 * Math.max((accuracy - 60) / 40, 0);
+                    };
+                    CanvasUtils.prototype.scoreFromAccuracy = function (accuracy) {
+                        if (accuracy > 50 && accuracy < 85) {
+                            return Math.round(accuracy);
+                        }
+                        else if (accuracy >= 85 && accuracy < 90) {
+                            return Math.round(accuracy * 10);
+                        }
+                        else if (accuracy >= 90 && accuracy < 95) {
+                            return Math.round(accuracy * 100);
+                        }
+                        else if (accuracy >= 95) {
+                            return Math.round(accuracy * 100);
+                        }
+                        return 0;
                     };
                     return CanvasUtils;
                 }());
