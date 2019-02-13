@@ -56,7 +56,7 @@ var com;
             constants.RULES = "How to play:\n                        <ul>\n                            <li>You will guess the RGB value of the background, and type your guess in as quickly as possible. Once you\n                                submit your guess, the colour will change.</li>\n                            <li>You will have 2 minutes to make as many close guesses as possible.</li>\n                        </ul>";
             constants.SCORING = "Contols:\n                            <ul>\n                                <li>W: increment value in input field.\n                                </li>\n                                <li>S: decrement value in input field.\n                                </li>\n                                <li>A: move left.\n                                </li>\n                                <li>D: move right\n                                </li>\n                                <li>C: clear input field.\n                                </li>\n                                <li>Z: Clear all input fields.\n                                </li>\n                                <li>Enter: submit (must be on G input)\n                                </li>\n                            </ul>";
             constants.END_MESSAGE = "<center><h1>GAME OVER<h1></center>";
-            constants.CREDITS = "<center>RGBGuess and game audio \u00A9 Bhavya Kashyap 2019</center><br/>";
+            constants.CREDITS = "<center>rgb(G,u,ess) and game audio \u00A9 Bhavya Kashyap 2019</center><br/>";
         })(constants = rgbguess.constants || (rgbguess.constants = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
@@ -229,6 +229,133 @@ var com;
                 return SubmissionEvent;
             }(events.RGBEvent));
             events.SubmissionEvent = SubmissionEvent;
+        })(events = rgbguess.events || (rgbguess.events = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
+///<reference path='../../events/ModalEvent.ts'/>
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var game;
+        (function (game) {
+            var ui;
+            (function (ui) {
+                var Modal = /** @class */ (function () {
+                    function Modal() {
+                        this.modalContext = document.getElementById("modal");
+                        this.modal = document.createElement("div");
+                        this.closeButton = document.createElement("span");
+                        this.header = document.createElement("header");
+                        this.heading = document.createElement("h1");
+                        this.subtitle = document.createElement("h2");
+                        this.content = document.createElement("div");
+                        this.footer = this.footer = document.createElement("footer");
+                        this.type = com.rgbguess.events.ModalType.DEFAULT;
+                        this.modal.className = "modal-content";
+                        this.modalContext.appendChild(this.modal);
+                        this.closeButton.className = "close";
+                        //this.closeButton.innerHTML = "&times;";
+                        this.modal.appendChild(this.closeButton);
+                        //this.modalContext.style.display = "none";
+                    }
+                    ;
+                    Modal.prototype.show = function () {
+                        this.modal.style.display = "block";
+                        new com.rgbguess.events.ModalEvent(this.type, com.rgbguess.events.ModalState.SHOWING).dispatch();
+                    };
+                    Modal.prototype.close = function () {
+                        this.modalContext.style.display = "none";
+                        this.cb();
+                        console.log("closing");
+                    };
+                    Modal.prototype.setHeading = function (heading) {
+                        this.heading.append(heading);
+                    };
+                    Modal.prototype.setSubtitle = function (subtitle) {
+                        this.subtitle.append(subtitle);
+                    };
+                    Modal.prototype.setContent = function (content) {
+                        this.content.append(content);
+                    };
+                    Modal.prototype.setFooter = function (footer) {
+                        this.footer.append(footer);
+                    };
+                    Modal.prototype.isShowing = function () {
+                        return false;
+                    };
+                    Modal.prototype.construct = function () {
+                        this.header.appendChild(this.heading);
+                        this.header.appendChild(this.subtitle);
+                        this.modal.appendChild(this.header);
+                        this.modal.appendChild(this.content);
+                        this.modal.appendChild(this.footer);
+                        this.modalContext.appendChild(this.modal);
+                        var cb = this.cb;
+                        var closeButton = this.closeButton;
+                        this.closeButton.addEventListener("click", function (e) {
+                            cb();
+                            closeButton.removeEventListener("click", function () { });
+                        });
+                    };
+                    Modal.prototype.setCancelCallback = function (cb) {
+                        this.cb = cb;
+                    };
+                    Modal.prototype.destroy = function () {
+                        this.close();
+                        this.modalContext.removeChild(this.modal);
+                    };
+                    Modal.prototype.setType = function (type) {
+                        this.type = type;
+                    };
+                    return Modal;
+                }());
+                ui.Modal = Modal;
+            })(ui = game.ui || (game.ui = {}));
+        })(game = rgbguess.game || (rgbguess.game = {}));
+    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
+})(com || (com = {}));
+///<reference path='rgbevent.ts'/>
+///<reference path='../game/ui/Modal.ts'/>
+var com;
+(function (com) {
+    var rgbguess;
+    (function (rgbguess) {
+        var events;
+        (function (events) {
+            events.MODAL_EVENT = "modalReady";
+            var ModalType;
+            (function (ModalType) {
+                ModalType[ModalType["STARTING_MODAL"] = 0] = "STARTING_MODAL";
+                ModalType[ModalType["ENDING_MODAL"] = 1] = "ENDING_MODAL";
+                ModalType[ModalType["DEFAULT"] = 2] = "DEFAULT";
+            })(ModalType = events.ModalType || (events.ModalType = {}));
+            var ModalState;
+            (function (ModalState) {
+                ModalState[ModalState["SHOWING"] = 0] = "SHOWING";
+                ModalState[ModalState["HIDDEN"] = 1] = "HIDDEN";
+            })(ModalState = events.ModalState || (events.ModalState = {}));
+            var ModalEvent = /** @class */ (function (_super) {
+                __extends(ModalEvent, _super);
+                function ModalEvent(modalType, state) {
+                    var _this = _super.call(this, "") || this;
+                    _this.state = ModalState.SHOWING;
+                    _this.modalType = modalType;
+                    _this.state = state;
+                    return _this;
+                }
+                ModalEvent.prototype.dispatch = function () {
+                    var event = new CustomEvent(events.MODAL_EVENT, {
+                        detail: {
+                            type: this.modalType,
+                            state: this.state
+                        }
+                    });
+                    this.eventBus.dispatchEvent(event);
+                };
+                return ModalEvent;
+            }(events.RGBEvent));
+            events.ModalEvent = ModalEvent;
         })(events = rgbguess.events || (rgbguess.events = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
@@ -523,83 +650,6 @@ var com;
         })(game = rgbguess.game || (rgbguess.game = {}));
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
-var com;
-(function (com) {
-    var rgbguess;
-    (function (rgbguess) {
-        var game;
-        (function (game) {
-            var ui;
-            (function (ui) {
-                var Modal = /** @class */ (function () {
-                    function Modal() {
-                        this.modalContext = document.getElementById("modal");
-                        this.modal = document.createElement("div");
-                        this.closeButton = document.createElement("span");
-                        this.header = document.createElement("header");
-                        this.heading = document.createElement("h1");
-                        this.subtitle = document.createElement("h2");
-                        this.content = document.createElement("div");
-                        this.footer = this.footer = document.createElement("footer");
-                        this.modal.className = "modal-content";
-                        this.modalContext.appendChild(this.modal);
-                        this.closeButton.className = "close";
-                        //this.closeButton.innerHTML = "&times;";
-                        this.modal.appendChild(this.closeButton);
-                        //this.modalContext.style.display = "none";
-                    }
-                    ;
-                    Modal.prototype.show = function () {
-                        this.modal.style.display = "block";
-                    };
-                    Modal.prototype.close = function () {
-                        this.modalContext.style.display = "none";
-                        this.cb();
-                        console.log("closing");
-                    };
-                    Modal.prototype.setHeading = function (heading) {
-                        this.heading.append(heading);
-                    };
-                    Modal.prototype.setSubtitle = function (subtitle) {
-                        this.subtitle.append(subtitle);
-                    };
-                    Modal.prototype.setContent = function (content) {
-                        this.content.append(content);
-                    };
-                    Modal.prototype.setFooter = function (footer) {
-                        this.footer.append(footer);
-                    };
-                    Modal.prototype.isShowing = function () {
-                        return false;
-                    };
-                    Modal.prototype.construct = function () {
-                        this.header.appendChild(this.heading);
-                        this.header.appendChild(this.subtitle);
-                        this.modal.appendChild(this.header);
-                        this.modal.appendChild(this.content);
-                        this.modal.appendChild(this.footer);
-                        this.modalContext.appendChild(this.modal);
-                        var cb = this.cb;
-                        var closeButton = this.closeButton;
-                        this.closeButton.addEventListener("click", function (e) {
-                            cb();
-                            closeButton.removeEventListener("click", function () { });
-                        });
-                    };
-                    Modal.prototype.setCancelCallback = function (cb) {
-                        this.cb = cb;
-                    };
-                    Modal.prototype.destroy = function () {
-                        this.close();
-                        this.modalContext.removeChild(this.modal);
-                    };
-                    return Modal;
-                }());
-                ui.Modal = Modal;
-            })(ui = game.ui || (game.ui = {}));
-        })(game = rgbguess.game || (rgbguess.game = {}));
-    })(rgbguess = com.rgbguess || (com.rgbguess = {}));
-})(com || (com = {}));
 ///<reference path='rgbevent.ts'/>
 var com;
 (function (com) {
@@ -640,10 +690,12 @@ var com;
             (function (ui) {
                 var Constants = com.rgbguess.constants;
                 var StartEvent = com.rgbguess.events.StartEvent;
+                var ModalType = com.rgbguess.events.ModalType;
                 var StartingModal = /** @class */ (function (_super) {
                     __extends(StartingModal, _super);
                     function StartingModal() {
                         var _this = _super.call(this) || this;
+                        _this.setType(ModalType.STARTING_MODAL);
                         var buttonTut = document.createElement("input");
                         buttonTut.type = "button";
                         buttonTut.className = "primary";
@@ -725,6 +777,7 @@ var com;
     })(rgbguess = com.rgbguess || (com.rgbguess = {}));
 })(com || (com = {}));
 ///<reference path='events/submissionevent.ts'/>
+///<reference path='events/ModalEvent.ts'/>
 ///<reference path='user/user.ts'/>
 ///<reference path='game/ui/canvasutils.ts'/>
 ///<reference path='game/ui/ui.ts'/>
@@ -735,6 +788,7 @@ var com;
 ///<reference path='constants/constants.ts'/>
 console.log("Welcome to rgbGuess!");
 var Events = com.rgbguess.events;
+var UI = com.rgbguess.game.ui;
 var CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
 var RGB = com.rgbguess.game.ui.RGB;
 var StartingModal = com.rgbguess.game.ui.StartingModal;
@@ -820,6 +874,13 @@ window.addEventListener(Events.START_EVENT, function (e) {
     application.start();
     window.removeEventListener(Events.START_EVENT, function () { });
 }, false);
+window.addEventListener(Events.MODAL_EVENT, function (e) {
+    var detail = e.detail;
+    console.log("Received modal event: " + detail);
+    if (detail.type == Events.ModalType.STARTING_MODAL) {
+        document.getElementById("loading-background").remove();
+    }
+});
 /**
  * Timer
  * @param duration

@@ -6,11 +6,14 @@ module com.rgbguess.game.ui {
 
     import Constants = com.rgbguess.constants;
     import StartEvent = com.rgbguess.events.StartEvent;
+    import ModalType = com.rgbguess.events.ModalType;
 
     export class StartingModal extends Modal {
 
         constructor() {
             super();
+
+            this.setType(ModalType.STARTING_MODAL);
 
             let buttonTut = document.createElement("input");
             buttonTut.type = "button";
@@ -38,14 +41,14 @@ module com.rgbguess.game.ui {
             this.setFooter(footer);
 
             this.setCancelCallback(function (e) {
-                
+
 
             });
 
             buttonPlay.addEventListener("click", function (e) {
                 console.log("Starting Game");
                 new StartEvent().dispatch()
-                buttonPlay.removeEventListener("click", function(){});
+                buttonPlay.removeEventListener("click", function () { });
             });
         }
     }

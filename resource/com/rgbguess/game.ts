@@ -1,4 +1,5 @@
 ///<reference path='events/submissionevent.ts'/>
+///<reference path='events/ModalEvent.ts'/>
 ///<reference path='user/user.ts'/>
 ///<reference path='game/ui/canvasutils.ts'/>
 ///<reference path='game/ui/ui.ts'/>
@@ -11,12 +12,15 @@
 console.log("Welcome to rgbGuess!");
 
 import Events = com.rgbguess.events;
+
+import UI = com.rgbguess.game.ui;
 import CanvasUtils = com.rgbguess.game.ui.CanvasUtils;
 import RGB = com.rgbguess.game.ui.RGB;
 import StartingModal = com.rgbguess.game.ui.StartingModal;
 import EndModal = com.rgbguess.game.ui.EndModal;
 import UIControls = com.rgbguess.game.ui.UIControls;
 import Overlay = com.rgbguess.game.ui.Overlay;
+
 import User = com.rgbguess.user;
 import Constants = com.rgbguess.constants;
 
@@ -106,6 +110,15 @@ window.addEventListener(Events.START_EVENT, function (e: CustomEvent) {
     application.start();
     window.removeEventListener(Events.START_EVENT, function () { });
 }, false);
+
+window.addEventListener(Events.MODAL_EVENT, function (e: CustomEvent) {
+    let detail: { type: Events.ModalType; state: Events.ModalState } = e.detail;
+    console.log("Received modal event: " + detail);
+
+    if (detail.type == Events.ModalType.STARTING_MODAL) {
+        (<HTMLDivElement>document.getElementById("loading-background")).remove();
+    }
+})
 
 /**
  * Timer
