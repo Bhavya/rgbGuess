@@ -1,5 +1,7 @@
-module com.rgbguess.game.ui {
+///<reference path='../../events/ModalEvent.ts'/>
 
+module com.rgbguess.game.ui {
+   
     export class Modal {
 
         private modalContext: HTMLDivElement = <HTMLDivElement>document.getElementById("modal");;
@@ -8,12 +10,14 @@ module com.rgbguess.game.ui {
         private isConstructed: boolean;
 
         private header = document.createElement("header");
-        private heading =  document.createElement("h1");
+        private heading = document.createElement("h1");
         private subtitle = document.createElement("h2");
         private content = document.createElement("div");
         private footer = this.footer = document.createElement("footer");
 
         private cb;
+
+        private type = com.rgbguess.events.ModalType.DEFAULT;
 
         constructor() {
             this.modal.className = "modal-content";
@@ -27,6 +31,7 @@ module com.rgbguess.game.ui {
 
         show(): void {
             this.modal.style.display = "block";
+            new com.rgbguess.events.ModalEvent(this.type, com.rgbguess.events.ModalState.SHOWING).dispatch();
         }
 
         close(): void {
@@ -36,7 +41,7 @@ module com.rgbguess.game.ui {
         }
 
         setHeading(heading: string): void {
-           this.heading.append(heading);
+            this.heading.append(heading);
         }
 
         setSubtitle(subtitle: string): void {
@@ -67,7 +72,7 @@ module com.rgbguess.game.ui {
             let closeButton = this.closeButton;
             this.closeButton.addEventListener("click", function (e) {
                 cb();
-                closeButton.removeEventListener("click", function(){});
+                closeButton.removeEventListener("click", function () { });
             });
         }
 
@@ -78,6 +83,10 @@ module com.rgbguess.game.ui {
         destroy() {
             this.close();
             this.modalContext.removeChild(this.modal);
+        }
+
+        setType(type: com.rgbguess.events.ModalType) {
+            this.type = type;
         }
     }
 }

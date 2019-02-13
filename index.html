@@ -9,6 +9,12 @@
 
 <body>
 
+    <div id="loading-background" class="loading-background">
+        <div class="spinner">
+            <div class="lds-dual-ring"></div>
+        </div>
+    </div>
+
     <canvas id="canvas"></canvas>
 
     <div id="side-top" class="sideTop">
@@ -19,9 +25,12 @@
     <div id="control-bar" class="control-bar">
         <div class="center-control">
             <div class="rgb-textual-entry">
-                <input id="1" type="number" maxlength="3" min="0" max="255" onkeydown="ValidatePassKey(this, event)" placeholder="000">
-                <input id="2" type="number" maxlength="3" min="0" max="255" onkeydown="ValidatePassKey(this, event)" placeholder="000">
-                <input id="3" type="number" maxlength="3" min="0" max="255" onkeydown="ValidatePassKey(this, event)" placeholder="000"> 
+                <input id="1" type="number" maxlength="3" min="0" max="255" onkeydown="ValidatePassKey(this, event)"
+                    placeholder="000">
+                <input id="2" type="number" maxlength="3" min="0" max="255" onkeydown="ValidatePassKey(this, event)"
+                    placeholder="000">
+                <input id="3" type="number" maxlength="3" min="0" max="255" onkeydown="ValidatePassKey(this, event)"
+                    placeholder="000">
             </div>
             <div id="colour-preview" class="colour-preview">
             </div>
@@ -36,7 +45,7 @@
 
     <!-- Audio -->
     <!--iframe src="assets/game_music_loop_heavy_beat.mp3" allow="autoplay" style="display:none" id="iframeAudio">
-    </iframe--> 
+    </iframe-->
     <!--audio autoplay loop id="playAudio" preload="auto">
         <source src="assets/game_music_loop_heavy_beat.mp3" type="audio/mpeg">
     </audio-->
